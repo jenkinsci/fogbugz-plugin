@@ -22,6 +22,8 @@ import java.util.regex.PatternSyntaxException;
 
 public class FogbugzProjectProperty extends JobProperty<AbstractProject<?, ?>> {
 
+    private static final Logger LOGGER = Logger.getLogger(FogbugzProjectProperty.class.getName());
+
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
@@ -68,7 +70,7 @@ public class FogbugzProjectProperty extends JobProperty<AbstractProject<?, ?>> {
 
         public String getRegex() {
             if (regex == null) {
-                return "CASE-\\b[0-9.]*[0-9]\\b";
+                return "CASE-([0-9]*)";
             }
             return regex;
         }
@@ -117,5 +119,4 @@ public class FogbugzProjectProperty extends JobProperty<AbstractProject<?, ?>> {
 
     }
 
-    private static final Logger LOGGER = Logger.getLogger(FogbugzProjectProperty.class.getName());
 }
