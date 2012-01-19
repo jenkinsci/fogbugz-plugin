@@ -1,0 +1,12 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+	<f:section title="Fogbugz">
+    <f:entry title="Bug ID Regex" help="/plugin/fogbugz/regex.html">
+	    <f:textbox name="fogbugz.regex" value="${descriptor.regex}"
+        checkUrl="'${rootURL}/jobProperty/FogbugzProjectProperty/regexCheck?value='+escape(this.value)" />
+	</f:entry>
+    <f:entry title="Bugzilla base URL" help="/plugin/fogbugz/url.html">
+	    <f:textbox name="fogbugz.url" value="${descriptor.url}"
+        checkUrl="'${rootURL}/jobProperty/FogbugzProjectProperty/urlCheck?value='+escape(this.value)" />
+	</f:entry>
+  </f:section>
+</j:jelly>

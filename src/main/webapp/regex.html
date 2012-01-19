@@ -1,0 +1,7 @@
+<div>
+  This is the regex used to match case IDs in changeset comments.  After a match is found, first the entire match,
+  then every grouping within the match is parsed as an integer. The first successful parse is used as the case ID.
+  <br>To match any number, use: <b><tt>[0-9]+</tt></b>
+  <br>The Fogbugz style of matching case + number would be: <b><tt>CASE-([0-9]+)</tt></b>
+  Note that the parenthesis in this example are used to identify the case number.
+</div>
