@@ -10,8 +10,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.util.logging.Level;
 
-import static hudson.Util.replaceMacro;
-
 /**
  * Adds a FogbugzLinkAction to the current build.
  * Gets CASE_ID from parameters or branch name.
@@ -29,7 +27,7 @@ public class FogbugzLinkBuilder extends Recorder {
     public final boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) {
         int caseId = 0;
         try {
-            String givenCaseId = replaceMacro("$CASE_ID", build.getEnvVars());
+            String givenCaseId = build.getEnvVars().get("CASE_ID");
             caseId = Integer.parseInt(givenCaseId);
         } catch (Exception e) {
             log.log(Level.SEVERE, "Could not resolve $CASE_ID, skipping build action creation.", e);

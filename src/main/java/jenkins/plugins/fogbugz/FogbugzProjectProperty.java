@@ -48,7 +48,7 @@ public class FogbugzProjectProperty extends JobProperty<AbstractProject<?, ?>> {
 
         @Override
         public String getDisplayName() {
-            return "Fogbugz case annotater";
+            return "Fogbugz case annotator";
         }
 
         @Override

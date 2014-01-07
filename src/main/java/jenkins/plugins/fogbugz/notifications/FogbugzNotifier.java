@@ -26,9 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-import static hudson.Util.*;
-
-
 /**
  * Notifier in Jenkins system, reports status to Fogbugz.
  * Searches for branches compatible with caseID, and reports if that's found.
@@ -62,14 +59,7 @@ public class FogbugzNotifier extends Notifier {
         l.println("----------- Now sending build status to FogBugz ----------");
         l.println("----------------------------------------------------------");
 
-        /* Set up environment and resolve some varaibles */
-        EnvVars envVars = null;
-        try {
-            envVars = build.getEnvironment(listener);
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Exception during retrieval of environment variables. Something is very wrong...", e);
-        }
-        String givenCaseId = replaceMacro("$CASE_ID", envVars);
+        String givenCaseId = (String) build.getEnvVars().get("CASE_ID");
 
         /* Get the name of the branch so we can figure out which case this build belongs to */
         if (!givenCaseId.isEmpty() && !givenCaseId.equals("0")) {
@@ -150,6 +140,7 @@ public class FogbugzNotifier extends Notifier {
             }
 
             // Set milestone if required
+            // TODO: again, replace this with an extension point, as this is very process specific.
             if (this.getDescriptor().doAssignBaseCase()) {
                 // Milestone should be set to 'target branch' without the 'r' in front of the release number.
                 if (fbCase.getTargetBranch().matches(this.getReleaseBranchRegex())) {

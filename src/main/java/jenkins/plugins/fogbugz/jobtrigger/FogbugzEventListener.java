@@ -52,7 +52,7 @@ public class FogbugzEventListener implements UnprotectedRootAction {
         FogbugzCase fbCase = caseManager.getCaseById(caseid);
 
         // Check for correct format of feature branch if regex and field name are set.
-        // TODO: make this independant of paylogic specifics
+        // TODO: Remove this very process specific part, and replace it with an extension point.
         if (!fbNotifier.getFeatureBranchRegex().isEmpty() && !fbNotifier.getDescriptor().getFeatureBranchFieldname().isEmpty()) {
             String featureBranch = "";
             try {
@@ -69,9 +69,9 @@ public class FogbugzEventListener implements UnprotectedRootAction {
         }
 
         // Check for correct format of release branch if regex and field name are set.
-        // TODO: make this independant of paylogic specifics
+        // TODO: Remove this very process specific part, and replace it with an extension point.
         if (!fbNotifier.getReleaseBranchRegex().isEmpty() && !fbNotifier.getDescriptor().getTargetBranchFieldname().isEmpty()) {
-            // Here, we check if case is paylogic release, else return error message.
+            // Here, we check if case is correct release, else return error message.
             if (!fbCase.getOriginalBranch().matches(fbNotifier.getReleaseBranchRegex())) {
                 fbCase = caseManager.assignToGatekeepers(fbCase);
                 log.log(Level.SEVERE, "No original branch found in correct format. Aborting trigger...");
