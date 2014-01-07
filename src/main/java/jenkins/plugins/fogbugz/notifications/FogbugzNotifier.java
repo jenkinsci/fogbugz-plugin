@@ -199,8 +199,8 @@ public class FogbugzNotifier extends Notifier {
         @Getter private boolean setMilestone = true;
         @Getter private String successfulBuildTag = "";
 
-        @Getter private String releaseBranchRegex = "c\\d+";
-        @Getter private String featureBranchRegex = "r\\d{4}";
+        @Getter private String featureBranchRegex = "c\\d+";
+        @Getter private String releaseBranchRegex = "r\\d{4}";
 
         public String getUrl() {
             return new FogbugzProjectProperty().getDescriptor().getUrl();
