@@ -1,0 +1,81 @@
+<!-- This template is used for the Global settings of the FogbugzPlugin's Notifier -->
+
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:section title="Fogbugz Plugin">
+    <f:entry>
+        <div>The URL used to communicate with Fogbugz is inherited from 'Fogbugz case annotator' settings <br />
+        You can leave all of this stuff empty if you don't want to use Fogbugz API communication.</div>
+    </f:entry>
+	
+	<f:entry title="API Token (required)" field="token"
+            description="API token to use for the Fogbugz API. You will need to login yourself.">
+		<f:textbox />
+	</f:entry>
+
+	<f:entry title="Feature branch fieldname" field="featureBranchFieldname"
+            description="Internal name of feature branch field. Eg: plugin_customfields_at_fogcreek_com_sourcexbranchd22">
+        <f:textbox />
+	</f:entry>
+
+	<f:entry title="Original branch fieldname" field="originalBranchFieldname"
+            description="Internal name of original branch field. Eg: plugin_customfields_at_fogcreek_com_targetxbranchc73">
+	    <f:textbox />
+	</f:entry>
+
+	<f:entry title="Target branch fieldname" field="targetBranchFieldname"
+            description="Internal name of target branch field. Eg: plugin_customfields_at_fogcreek_com_targetxbranchg01b">
+	    <f:textbox />
+	</f:entry>
+
+	<f:entry title="ID of mergekeeper user (required)" field="mergekeeperUserId"
+	        description="Eg: 225. Defaults to 1 if left empty">
+	    <f:textbox />
+	</f:entry>
+
+	<f:entry title="ID of gatekeeper user (required)" field="gatekeeperUserId"
+	        description="This will be used to detect who is the developer (last assignment to Gatekeepers). Eg: 67. Defaults to 1 if left empty">
+	    <f:textbox />
+	</f:entry>
+
+	<f:entry title="Template for reporting failed builds" field="failedBuildTemplate"
+	        description="This template will be parsed by mustache and then be sent to fogbugz as comment on case edit.">
+	    <f:textarea />
+	</f:entry>
+
+	<f:entry title="Template for reporting successful builds" field="successfulBuildTemplate"
+	        description="This template will be parsed by mustache and then be sent to fogbugz as comment on case edit.">
+	    <f:textarea />
+	</f:entry>
+
+	<f:entry title="Default Job to trigger on incoming Fogbugz event. (required if you want to use trigger url)" field="job_to_trigger"
+	        description="The full name of the Job to trigger on incoming Fogbugz event">
+	        <f:textbox />
+	</f:entry>
+
+	<f:entry title="Assign back case to developer that assigned to 'gatekeeper' user on end of build." field="assignBackCase"
+	        description="Enabling this will assign back the case to the developer that assigned the case to the 'mergekeepers' user.">
+	        <f:checkbox />
+	</f:entry>
+
+	<f:entry title="Set a milestone if the build succeeds." field="setMilestone"
+	        description="The milestone that will be set is the target branch minus the first character.">
+	        <f:checkbox />
+	</f:entry>
+
+	<f:entry title="Tag to add to Fogbugz case on successful build." field="successfulBuildTag"
+	        description="This tag will be added to the case if not already present on a successful build.">
+	        <f:textbox />
+    </f:entry>
+
+	<f:entry title="Regex for feature branch validation. (required)" field="featureBranchRegex"
+	        description="A Java readable regular expression to validate feature branch names with.">
+        <f:textbox />
+	</f:entry>
+
+	<f:entry title="Regex for release branch validation. (required)" field="releaseBranchRegex"
+	        description="A Java readable regular expression to validate release branch names with.">
+        <f:textbox />
+	</f:entry>
+  </f:section>
+</j:jelly>

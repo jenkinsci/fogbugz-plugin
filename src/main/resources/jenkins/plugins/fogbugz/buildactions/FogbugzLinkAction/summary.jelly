@@ -1,0 +1,11 @@
+<!-- Template that renders Fogbugz logo and URL on build page -->
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
+    <tr>
+        <td><img src="${rootURL}/plugin/fogbugz/images/fogbugz_icon.png" width="48" height="48" alt="Link to FogBugz case"/></td>
+        <td style="vertical-align:middle">
+            Build seems to be linked to Fogbugz Case <j:out value="${it.caseId}"/><br />
+            <a href="${it.caseUrl}" target="_blank">Open FogBugz case <j:out value="${it.caseId}"/> in new tab/window.</a>
+        </td>
+    </tr>
+</j:jelly>

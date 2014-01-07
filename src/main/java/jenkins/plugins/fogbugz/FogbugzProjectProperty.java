@@ -24,6 +24,10 @@ public class FogbugzProjectProperty extends JobProperty<AbstractProject<?, ?>> {
 
     private static final Logger LOGGER = Logger.getLogger(FogbugzProjectProperty.class.getName());
 
+    public DescriptorImpl getDescriptor() {
+        return (DescriptorImpl)super.getDescriptor();
+    }
+
     @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
@@ -44,7 +48,7 @@ public class FogbugzProjectProperty extends JobProperty<AbstractProject<?, ?>> {
 
         @Override
         public String getDisplayName() {
-            return "Fogbugz";
+            return "Fogbugz case annotater";
         }
 
         @Override
@@ -62,7 +66,7 @@ public class FogbugzProjectProperty extends JobProperty<AbstractProject<?, ?>> {
 
         public String getUrl() {
             if (url == null) {
-                return "http://fogbugz";
+                return "http://fogbugz/";
             } else {
                 return url;
             }

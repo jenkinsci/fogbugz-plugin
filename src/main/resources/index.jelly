@@ -1,3 +1,4 @@
 <div>
-  This plugin integrates <a href="http://www.fogcreek.com/fogbugz/">Fogbugz</a> into Jenkins.
+  This plugin integrates <a href="http://www.fogcreek.com/fogbugz/">Fogbugz</a> into Jenkins.<br />
+  It is also able to trigger build from a Fogbugz URLtrigger, and add links to a case on the build page.
 </div>

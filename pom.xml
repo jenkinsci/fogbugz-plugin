@@ -3,14 +3,14 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.448</version>
+        <version>1.540</version>
     </parent>
 
     <artifactId>fogbugz</artifactId>
     <packaging>hpi</packaging>
-    <version>1.1-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
     <name>Fogbugz plugin</name>
-    <description>Fogbugz integration - link cases in changeset descriptions</description>
+    <description>Fogbugz integration for Jenkins</description>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/Fogbugz+Plugin</url>
 
     <scm>
@@ -25,7 +25,41 @@
             <name>Peter Liljenberg</name>
             <email>pliljenberg@gmail.com</email>
         </developer>
+        <developer>
+            <id>maikelwever</id>
+            <name>Maikel Wever</name>
+            <email>maikel@maikelwever.nl</email>
+        </developer>
     </developers>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jenkins-ci.main</groupId>
+            <artifactId>jenkins-core</artifactId>
+            <version>1.540</version>
+        </dependency>
+        <dependency>
+            <groupId>org.paylogic</groupId>   <!-- This artifact contains API interface for FogBugz 7+           -->
+            <artifactId>Fogbugz</artifactId>  <!-- The artifact is published on maven central repo               -->
+            <version>[2.0.0,)</version>       <!-- You can find the source on github.com/paylogic/java-fogbugz   -->
+                                              <!-- Feel free to send us a pull-request if you want more features -->
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>  <!-- Awesome shortcut decorations like @Log or @Getter -->
+            <version>[1.12.2,)</version>
+        </dependency>
+        <dependency>
+            <groupId>com.samskivert</groupId>
+            <artifactId>jmustache</artifactId>  <!-- Java Mustache template compiler for build report messages -->
+            <version>[1.8,)</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>[3.2,)</version>
+        </dependency>
+    </dependencies>
 
     <repositories>
         <repository>
