@@ -3,7 +3,7 @@ package jenkins.plugins.fogbugz.buildactions;
 import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.Publisher;
+import hudson.tasks.Builder;
 import lombok.extern.java.Log;
 
 /**
@@ -11,7 +11,7 @@ import lombok.extern.java.Log;
  */
 @Log
 @Extension
-public class FogbugzLinkDescriptor extends BuildStepDescriptor<Publisher> {
+public class FogbugzLinkDescriptor extends BuildStepDescriptor<Builder> {
 
     public FogbugzLinkDescriptor() {
         super(FogbugzLinkBuilder.class);

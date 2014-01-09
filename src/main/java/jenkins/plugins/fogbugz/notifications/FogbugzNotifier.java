@@ -163,8 +163,13 @@ public class FogbugzNotifier extends Notifier {
         return (DescriptorImpl)super.getDescriptor();
     }
 
+    @Deprecated
     public FogbugzManager getFogbugzCaseManager() {
         return this.getDescriptor().getFogbugzCaseManager();
+    }
+
+    public FogbugzManager getFogbugzManager() {
+        return this.getDescriptor().getFogbugzManager();
     }
 
 
