@@ -7,7 +7,7 @@ import jenkins.plugins.fogbugz.notifications.FogbugzNotifier;
 import lombok.extern.java.Log;
 import org.kohsuke.stapler.QueryParameter;
 import org.paylogic.fogbugz.FogbugzCase;
-import org.paylogic.fogbugz.FogbugzCaseManager;
+import org.paylogic.fogbugz.FogbugzManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class FogbugzEventListener implements UnprotectedRootAction {
             return;
         }
 
-        FogbugzCaseManager caseManager = fbNotifier.getFogbugzCaseManager();
+        FogbugzManager caseManager = fbNotifier.getFogbugzCaseManager();
         FogbugzCase fbCase = caseManager.getCaseById(caseid);
 
         // Check for correct format of feature branch if regex and field name are set.

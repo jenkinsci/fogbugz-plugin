@@ -6,7 +6,6 @@ import com.samskivert.mustache.Template;
 import jenkins.plugins.fogbugz.FogbugzProjectProperty;
 import org.apache.commons.lang.StringEscapeUtils;
 
-import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.*;
@@ -17,7 +16,7 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 import org.paylogic.fogbugz.FogbugzCase;
-import org.paylogic.fogbugz.FogbugzCaseManager;
+import org.paylogic.fogbugz.FogbugzManager;
 import org.paylogic.fogbugz.FogbugzEvent;
 
 import java.io.IOException;
@@ -28,7 +27,7 @@ import java.util.logging.Level;
 
 /**
  * Notifier in Jenkins system, reports status to Fogbugz.
- * Searches for branches compatible with caseID, and reports if that's found.
+ * Gets its information from a build parameter called "CASE_ID", so make sure you set that.
  */
 @Log
 public class FogbugzNotifier extends Notifier {
@@ -94,7 +93,7 @@ public class FogbugzNotifier extends Notifier {
 
 
         /* Retrieve case */
-        FogbugzCaseManager caseManager = this.getFogbugzCaseManager();
+        FogbugzManager caseManager = this.getFogbugzCaseManager();
         FogbugzCase fbCase = caseManager.getCaseById(usableCaseId);
         if (fbCase == null) {
             log.log(Level.SEVERE, "Fetching case from fogbugz failed. Please check your settings.");
@@ -108,6 +107,7 @@ public class FogbugzNotifier extends Notifier {
         templateContext.put("url", build.getAbsoluteUrl());
         templateContext.put("buildNumber", Integer.toString(build.getNumber()));
         templateContext.put("buildResult", build.getResult().toString());
+        log.log(Level.FINE, "ReportingExtraMessage: " + reportingExtraMessage);
         templateContext.put("messages", StringEscapeUtils.unescapeHtml(reportingExtraMessage));
         try {
             templateContext.put("tests_failed", Integer.toString(build.getTestResultAction().getFailCount()));
@@ -144,8 +144,10 @@ public class FogbugzNotifier extends Notifier {
             if (this.getDescriptor().doAssignBaseCase()) {
                 // Milestone should be set to 'target branch' without the 'r' in front of the release number.
                 if (fbCase.getTargetBranch().matches(this.getReleaseBranchRegex())) {
-                    // Strip 'r' from release number and set as milestone.
-                    fbCase.setMilestone(fbCase.getTargetBranch().substring(1, fbCase.getTargetBranch().length()));
+                    // Strip 'r' from release number and set as milestone (creating one if not exists).
+                    String milestoneName = fbCase.getTargetBranch().substring(1, fbCase.getTargetBranch().length());
+                    caseManager.createMilestoneIfNotExists(milestoneName);
+                    fbCase.setMilestone(milestoneName);
                 }
             }
         } else {
@@ -161,7 +163,7 @@ public class FogbugzNotifier extends Notifier {
         return (DescriptorImpl)super.getDescriptor();
     }
 
-    public FogbugzCaseManager getFogbugzCaseManager() {
+    public FogbugzManager getFogbugzCaseManager() {
         return this.getDescriptor().getFogbugzCaseManager();
     }
 
@@ -299,10 +301,15 @@ public class FogbugzNotifier extends Notifier {
             return super.configure(req, formData);
         }
 
-        public FogbugzCaseManager getFogbugzCaseManager() {
-            return new FogbugzCaseManager(this.getUrl(), this.getToken(), this.getFeatureBranchFieldname(),
-                                             this.getOriginalBranchFieldname(), this.getTargetBranchFieldname(),
-                                             this.getMergekeeperUserId(), this.getGatekeeperUserId());
+        @Deprecated
+        public FogbugzManager getFogbugzCaseManager() {
+            return this.getFogbugzManager();
+        }
+
+        public FogbugzManager getFogbugzManager() {
+            return new FogbugzManager(this.getUrl(), this.getToken(), this.getFeatureBranchFieldname(),
+                    this.getOriginalBranchFieldname(), this.getTargetBranchFieldname(),
+                    this.getMergekeeperUserId(), this.getGatekeeperUserId());
         }
 
 	}

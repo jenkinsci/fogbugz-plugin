@@ -15,7 +15,7 @@ import lombok.extern.java.Log;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.paylogic.fogbugz.FogbugzCase;
-import org.paylogic.fogbugz.FogbugzCaseManager;
+import org.paylogic.fogbugz.FogbugzManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,7 @@ public class FogbugzCaseCreator extends Notifier {
             if (newFailedTests) {
                 // We have new failing tests it seems.
                 FogbugzNotifier notifier = new FogbugzNotifier();
-                FogbugzCaseManager caseManager = notifier.getFogbugzCaseManager();
+                FogbugzManager caseManager = notifier.getFogbugzCaseManager();
                 FogbugzCase fbCase = new FogbugzCase(
                         0, // ID of 0 should create new case.
                         String.format("New failing tests in Jenkins job '%s'", build.getProject().getName()), // Case title

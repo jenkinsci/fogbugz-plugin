@@ -4,10 +4,11 @@ import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.tasks.BuildStepMonitor;
-import hudson.tasks.Recorder;
+import hudson.tasks.Builder;
 import lombok.extern.java.Log;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import java.io.Serializable;
 import java.util.logging.Level;
 
 /**
@@ -15,7 +16,7 @@ import java.util.logging.Level;
  * Gets CASE_ID from parameters or branch name.
  */
 @Log
-public class FogbugzLinkBuilder extends Recorder {
+public class FogbugzLinkBuilder extends Builder implements Serializable {
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
     }
