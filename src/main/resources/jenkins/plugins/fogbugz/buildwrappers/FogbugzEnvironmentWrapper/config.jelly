@@ -1,0 +1,14 @@
+<!-- This template is used for the Global settings of the GatekeeperPlugin -->
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:advanced>
+        <tr>
+            <td>
+                <f:entry title="HG repo base url" field="repoBase"
+                      description="Base URL for code server. Eg: ssh://codeserver//var/hg/. Leave empty to disable repo url validation.">
+                  <f:textbox />
+                </f:entry>
+            </td>
+        </tr>
+    </f:advanced>
+</j:jelly>

@@ -18,6 +18,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.paylogic.fogbugz.FogbugzCase;
 import org.paylogic.fogbugz.FogbugzManager;
 import org.paylogic.fogbugz.FogbugzEvent;
+import org.paylogic.fogbugz.InvalidResponseException;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -58,7 +59,12 @@ public class FogbugzNotifier extends Notifier {
         l.println("----------- Now sending build status to FogBugz ----------");
         l.println("----------------------------------------------------------");
 
-        String givenCaseId = (String) build.getEnvVars().get("CASE_ID");
+        String givenCaseId = null;
+        try {
+            givenCaseId = (String) build.getEnvironment(listener).get("CASE_ID");
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Exception while fetching environment variables.", e);
+        }
 
         /* Get the name of the branch so we can figure out which case this build belongs to */
         if (!givenCaseId.isEmpty() && !givenCaseId.equals("0")) {
@@ -93,8 +99,14 @@ public class FogbugzNotifier extends Notifier {
 
 
         /* Retrieve case */
-        FogbugzManager caseManager = this.getFogbugzCaseManager();
-        FogbugzCase fbCase = caseManager.getCaseById(usableCaseId);
+        FogbugzManager caseManager = this.getFogbugzManager();
+        FogbugzCase fbCase = null;
+        try {
+            fbCase = caseManager.getCaseById(usableCaseId);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Fetching case from fogbugz failed. Please check your settings.", e);
+            return false;
+        }
         if (fbCase == null) {
             log.log(Level.SEVERE, "Fetching case from fogbugz failed. Please check your settings.");
             return false;
@@ -196,6 +208,7 @@ public class FogbugzNotifier extends Notifier {
         @Getter private String featureBranchFieldname;
         @Getter private String originalBranchFieldname;
         @Getter private String targetBranchFieldname;
+        @Getter private String approvedRevisionFieldname;
 
         @Getter private String job_to_trigger;
 
@@ -278,6 +291,7 @@ public class FogbugzNotifier extends Notifier {
             this.featureBranchFieldname = formData.getString("featureBranchFieldname");
             this.originalBranchFieldname = formData.getString("originalBranchFieldname");
             this.targetBranchFieldname = formData.getString("targetBranchFieldname");
+            this.approvedRevisionFieldname = formData.getString("approvedRevisionFieldname");
 
             int mergekeeperid = formData.getInt("mergekeeperUserId");
             if (mergekeeperid == 0) {
@@ -313,7 +327,7 @@ public class FogbugzNotifier extends Notifier {
 
         public FogbugzManager getFogbugzManager() {
             return new FogbugzManager(this.getUrl(), this.getToken(), this.getFeatureBranchFieldname(),
-                    this.getOriginalBranchFieldname(), this.getTargetBranchFieldname(),
+                    this.getOriginalBranchFieldname(), this.getTargetBranchFieldname(), this.getApprovedRevisionFieldname(),
                     this.getMergekeeperUserId(), this.getGatekeeperUserId());
         }
 
