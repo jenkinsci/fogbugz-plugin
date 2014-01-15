@@ -83,7 +83,7 @@ public class FogbugzEventListener implements UnprotectedRootAction {
 
         // Check for correct format of release branch if regex and field name are set.
         // TODO: Remove this very process specific part, and replace it with an extension point.
-        if (!fbNotifier.getReleaseBranchRegex().isEmpty() && !fbNotifier.getDescriptor().getTargetBranchFieldname().isEmpty()) {
+        if (!fbNotifier.getReleaseBranchRegex().isEmpty() && !fbNotifier.getDescriptor().getOriginalBranchFieldname().isEmpty()) {
             // Here, we check if case is correct release, else return error message.
             if (!fbCase.getOriginalBranch().matches(fbNotifier.getReleaseBranchRegex())) {
                 fbCase = caseManager.assignToGatekeepers(fbCase);

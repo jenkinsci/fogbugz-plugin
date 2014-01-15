@@ -113,10 +113,11 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
         }
 
         // Fetch case
+        int caseId = Integer.parseInt(currentEnv.get("CASE_ID", ""));
         FogbugzManager manager = new FogbugzNotifier().getFogbugzManager();
         FogbugzCase fbCase = null;
         try {
-            fbCase = manager.getCaseById(Integer.parseInt(currentEnv.get("CASE_ID")));
+            fbCase = manager.getCaseById(caseId);
         } catch (Exception e) {
             log.log(Level.INFO, "Exception while fetching case from Fogbugz", e);
             return null;
