@@ -48,8 +48,21 @@ public class FogbugzEventListener implements UnprotectedRootAction {
             return;
         }
 
-        FogbugzManager caseManager = fbNotifier.getFogbugzCaseManager();
-        FogbugzCase fbCase = caseManager.getCaseById(caseid);
+        FogbugzManager caseManager = fbNotifier.getFogbugzManager();
+        FogbugzCase fbCase = null;
+        try {
+            fbCase = caseManager.getCaseById(caseid);
+        } catch (Exception e) {
+            log.log(Level.INFO, "No case found with this id, not triggering anything.", e);
+            return;
+        }
+
+        for (String tag : fbCase.getTags()) {
+            if (tag.equals("autocreated")) {
+                // Then do not process this case until the tag is removed.
+                return;
+            }
+        }
 
         // Check for correct format of feature branch if regex and field name are set.
         // TODO: Remove this very process specific part, and replace it with an extension point.
@@ -70,7 +83,7 @@ public class FogbugzEventListener implements UnprotectedRootAction {
 
         // Check for correct format of release branch if regex and field name are set.
         // TODO: Remove this very process specific part, and replace it with an extension point.
-        if (!fbNotifier.getReleaseBranchRegex().isEmpty() && !fbNotifier.getDescriptor().getTargetBranchFieldname().isEmpty()) {
+        if (!fbNotifier.getReleaseBranchRegex().isEmpty() && !fbNotifier.getDescriptor().getOriginalBranchFieldname().isEmpty()) {
             // Here, we check if case is correct release, else return error message.
             if (!fbCase.getOriginalBranch().matches(fbNotifier.getReleaseBranchRegex())) {
                 fbCase = caseManager.assignToGatekeepers(fbCase);
@@ -92,8 +105,10 @@ public class FogbugzEventListener implements UnprotectedRootAction {
                 final List<ParameterValue> parameters = new ArrayList<ParameterValue>();
                 for (final ParameterDefinition pd : property.getParameterDefinitions()) {
                     final ParameterValue param = pd.getDefaultParameterValue();
+                    // Fill in CASE_ID
                     if (pd.getName().equals("CASE_ID")) {  // Override CASE_ID param if it's there.
                         parameters.add(new StringParameterValue("CASE_ID", Integer.toString(fbCase.getId())));
+                    // Else, just add the value already set.
                     } else if (param != null) {
                         parameters.add(param);
                     }

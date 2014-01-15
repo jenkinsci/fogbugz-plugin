@@ -28,6 +28,11 @@
 	    <f:textbox />
 	</f:entry>
 
+	<f:entry title="Approved revision fieldname" field="approvedRevisionFieldname"
+            description="Internal name of approved revision field. Eg: plugin_customfields_at_fogcreek_com_approvedxrevisiony81f">
+	    <f:textbox />
+	</f:entry>
+
 	<f:entry title="ID of mergekeeper user (required)" field="mergekeeperUserId"
 	        description="Eg: 225. Defaults to 1 if left empty">
 	    <f:textbox />
