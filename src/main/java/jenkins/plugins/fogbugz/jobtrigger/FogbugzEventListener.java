@@ -57,6 +57,13 @@ public class FogbugzEventListener implements UnprotectedRootAction {
             return;
         }
 
+        for (String tag : fbCase.getTags()) {
+            if (tag.equals("autocreated")) {
+                // Then do not process this case until the tag is removed.
+                return;
+            }
+        }
+
         // Check for correct format of feature branch if regex and field name are set.
         // TODO: Remove this very process specific part, and replace it with an extension point.
         if (!fbNotifier.getFeatureBranchRegex().isEmpty() && !fbNotifier.getDescriptor().getFeatureBranchFieldname().isEmpty()) {
