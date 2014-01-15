@@ -3,6 +3,7 @@ package jenkins.plugins.fogbugz.notifications;
 import com.samskivert.mustache.Mustache;
 import com.samskivert.mustache.Template;
 
+import hudson.EnvVars;
 import jenkins.plugins.fogbugz.FogbugzProjectProperty;
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -59,12 +60,14 @@ public class FogbugzNotifier extends Notifier {
         l.println("----------- Now sending build status to FogBugz ----------");
         l.println("----------------------------------------------------------");
 
-        String givenCaseId = null;
+        EnvVars envVars = null;
         try {
-            givenCaseId = (String) build.getEnvironment(listener).get("CASE_ID");
+            envVars = build.getEnvironment(listener);
         } catch (Exception e) {
             log.log(Level.SEVERE, "Exception while fetching environment variables.", e);
         }
+
+        String givenCaseId = envVars.get("CASE_ID", "");
 
         /* Get the name of the branch so we can figure out which case this build belongs to */
         if (!givenCaseId.isEmpty() && !givenCaseId.equals("0")) {
@@ -105,6 +108,7 @@ public class FogbugzNotifier extends Notifier {
             fbCase = caseManager.getCaseById(usableCaseId);
         } catch (Exception e) {
             log.log(Level.SEVERE, "Fetching case from fogbugz failed. Please check your settings.", e);
+            listener.getLogger().append("Fetching case from Fogbugz failed. Please check your settings.");
             return false;
         }
         if (fbCase == null) {

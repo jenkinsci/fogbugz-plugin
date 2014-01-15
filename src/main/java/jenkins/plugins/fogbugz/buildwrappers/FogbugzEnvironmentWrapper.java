@@ -34,7 +34,8 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
     public static class DescriptorImpl extends BuildWrapperDescriptor {
         @Override
         public String getDisplayName() {
-            return "Copy custom fields from case into environment variables.";
+            return "Copy custom fields from Fogbugz case retrieved by 'CASE_ID' environment variable into " +
+                    "environment variables available to other build steps.";
         }
 
         @Override
