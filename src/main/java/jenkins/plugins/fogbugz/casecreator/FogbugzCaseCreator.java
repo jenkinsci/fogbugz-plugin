@@ -69,7 +69,7 @@ public class FogbugzCaseCreator extends Notifier {
                         notifier.getDescriptor().getMergekeeperUserId(),  // AssignedTo
                         "autocreated", // tags
                         true, // isOpen
-                        "", "", "", // feature-, target- and originalbranch
+                        "", "", "", "", // feature-, target- and originalbranch + approved revision
                         "" // milestone
                 );
 
@@ -83,14 +83,14 @@ public class FogbugzCaseCreator extends Notifier {
                 );
 
                 if (!fbResult) {
-                    FogbugzCaseCreator.log.log(Level.SEVERE, "Something went wrong while creating a new case.");
+                    log.log(Level.SEVERE, "Something went wrong while creating a new case.");
                 }
             }
 
 
         } catch (Exception e) {
             // Its not important for this plugin to succeed, so ignore exceptions, but log them.
-            FogbugzCaseCreator.log.log(Level.INFO, "Exception in FogbugzCaseCreator.", e);
+            log.log(Level.INFO, "Exception in FogbugzCaseCreator.", e);
         }
         return true;
     }
