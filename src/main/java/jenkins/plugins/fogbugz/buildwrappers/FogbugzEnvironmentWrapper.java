@@ -3,9 +3,7 @@ package jenkins.plugins.fogbugz.buildwrappers;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
+import hudson.model.*;
 import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
 import jenkins.plugins.fogbugz.notifications.FogbugzNotifier;
@@ -15,6 +13,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.paylogic.fogbugz.FogbugzCase;
 import org.paylogic.fogbugz.FogbugzManager;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -100,8 +99,7 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
     /**
      * Retrieves data from Fogbugz, and puts it into environment variables.
      */
-    public Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) {
-        Environment env = new Environment() { };
+    public BuildWrapper.Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) {
         EnvVars envVars = new EnvVars();
 
         EnvVars currentEnv;
@@ -139,9 +137,13 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
         envVars.put("ORIGINAL_BRANCH", fbCase.getOriginalBranch());
         envVars.put("FEATURE_BRANCH", fbCase.getFeatureBranch());
         envVars.put("APPROVED_REVISION", fbCase.getApprovedRevision());
+        final Map<String, String> finalEnvVars = (Map<String, String>) envVars.clone();
 
-        // Return values to build
-        env.buildEnvVars(envVars);
-        return env;
+        return new Environment() {
+            @Override
+            public void buildEnvVars(Map<String, String> env) {
+                env.putAll(finalEnvVars);
+            }
+        };
     }
 }

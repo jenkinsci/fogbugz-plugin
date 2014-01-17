@@ -75,10 +75,11 @@ public class FogbugzCaseCreator extends Notifier {
 
                 boolean fbResult =  caseManager.saveCase(
                         fbCase, String.format("Job '%s' has %d more failing tests than the previous build.\n" +
-                        "New failing tests:\n%s", // TODO: customizable message
+                        "New failing tests:\n%s\nView complete result here: %s.", // TODO: customizable message
                             build.getProject().getName(),
                             currentFailingTests - previousFailingTests,
-                            StringUtils.join(newFailingTestsList, ",\n")
+                            StringUtils.join(newFailingTestsList, ",\n"),
+                            build.getAbsoluteUrl()
                         )
                 );
 
