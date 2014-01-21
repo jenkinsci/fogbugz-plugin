@@ -124,7 +124,8 @@ public class FogbugzNotifier extends Notifier {
         templateContext.put("buildNumber", Integer.toString(build.getNumber()));
         templateContext.put("buildResult", build.getResult().toString());
         log.log(Level.FINE, "ReportingExtraMessage: " + reportingExtraMessage);
-        templateContext.put("messages", StringEscapeUtils.unescapeHtml(reportingExtraMessage));
+        templateContext.put(
+                "messages", StringEscapeUtils.unescapeXml(StringEscapeUtils.unescapeHtml(reportingExtraMessage)));
         try {
             templateContext.put("tests_failed", Integer.toString(build.getTestResultAction().getFailCount()));
             templateContext.put("tests_skipped", Integer.toString(build.getTestResultAction().getSkipCount()));
