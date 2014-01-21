@@ -2,12 +2,10 @@ package jenkins.plugins.fogbugz.periodicwork;
 
 import hudson.Extension;
 import hudson.model.AperiodicWork;
+import jenkins.plugins.fogbugz.jobtrigger.FogbugzEventListener;
 import jenkins.plugins.fogbugz.notifications.FogbugzNotifier;
 import lombok.extern.java.Log;
-import org.paylogic.fogbugz.FogbugzCase;
-import org.paylogic.fogbugz.FogbugzManager;
-import org.paylogic.fogbugz.InvalidResponseException;
-import org.paylogic.fogbugz.NoSuchCaseException;
+import org.paylogic.fogbugz.*;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -55,7 +53,12 @@ public class FogbugzPeriodicWorkPoller extends AperiodicWork {
             try {
                 List<FogbugzCase> cases =  manager.searchForCases("assignedto:\"" + mergekeeperFullname + "\"");
                 for (FogbugzCase fbCase : cases) {
-
+                    if (!fbCase.hasTag("ci-scheduled") && !fbCase.hasTag("autocreated")) {
+                        fbCase.addTag("ci-scheduled");
+                        FogbugzEventListener.scheduleBuildForCase(fbCase);
+                        manager.saveCase(fbCase, "Jenkins scheduled a Mergekeeping job for this case, " +
+                                "and will report back here when it's done.");
+                    }
                 }
 
             } catch (InvalidResponseException e) {

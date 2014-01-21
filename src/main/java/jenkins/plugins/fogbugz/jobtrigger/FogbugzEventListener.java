@@ -96,6 +96,10 @@ public class FogbugzEventListener implements UnprotectedRootAction {
             }
         }
 
+        this.scheduleBuildForCase(fbCase);
+
+    }
+    public static void scheduleBuildForCase(FogbugzCase fbCase) {
         // Search for Job that'll be triggered.
         for (Project<?, ?> p: Jenkins.getInstance().getItems(Project.class)) {
             if (p.getName().equals(new FogbugzNotifier().getDescriptor().getJob_to_trigger())) {
