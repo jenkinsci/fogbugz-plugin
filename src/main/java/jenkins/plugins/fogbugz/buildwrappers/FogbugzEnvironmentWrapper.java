@@ -57,7 +57,7 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
      * Parses feature branch field of fogbugz case and comes up with full and valid full repo url.
      * @throws Exception
      */
-    private String parseRepoUrl(String featureBranchField) throws Exception {
+    public String parseRepoUrl(String featureBranchField) throws Exception {
 
         String repoBase = getRepoBase();
         Matcher baseUrlMatcher = URL_PATTERN.matcher(repoBase);
@@ -99,8 +99,12 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
     /**
      * Parses the branch name from fogbugz case.
      */
-    private static String parseBranchName(String branchExpression) {
-        return branchExpression.split("#")[1];
+    public static String parseBranchName(String branchExpression) {
+        String [] parts = branchExpression.split("#");
+        if (parts.length > 1) {
+            return parts[parts.length - 1];
+        }
+        return branchExpression;
     }
 
     /**
