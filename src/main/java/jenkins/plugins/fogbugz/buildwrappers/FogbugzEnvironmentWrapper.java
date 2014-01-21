@@ -97,6 +97,13 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
     }
 
     /**
+     * Parses the branch name from fogbugz case.
+     */
+    private static String parseBranchName(String branchExpression) {
+        return branchExpression.split("#")[1];
+    }
+
+    /**
      * Retrieves data from Fogbugz, and puts it into environment variables.
      */
     public BuildWrapper.Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) {
@@ -133,9 +140,9 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
         }
 
         // Put case values into map
-        envVars.put("TARGET_BRANCH", fbCase.getTargetBranch());
-        envVars.put("ORIGINAL_BRANCH", fbCase.getOriginalBranch());
-        envVars.put("FEATURE_BRANCH", fbCase.getFeatureBranch());
+        envVars.put("TARGET_BRANCH", this.parseBranchName(fbCase.getTargetBranch()));
+        envVars.put("ORIGINAL_BRANCH", this.parseBranchName(fbCase.getOriginalBranch()));
+        envVars.put("FEATURE_BRANCH", this.parseBranchName(fbCase.getFeatureBranch()));
         envVars.put("APPROVED_REVISION", fbCase.getApprovedRevision());
         final Map<String, String> finalEnvVars = (Map<String, String>) envVars.clone();
 
