@@ -33,6 +33,11 @@
 	    <f:textbox />
 	</f:entry>
 
+	<f:entry title="Full name of mergekeeper user (required)" field="mergekeeperFullname"
+	        description="Eg: 'Local Mergekeepers'.">
+	    <f:textbox />
+	</f:entry>
+
 	<f:entry title="ID of mergekeeper user (required)" field="mergekeeperUserId"
 	        description="Eg: 225. Defaults to 1 if left empty">
 	    <f:textbox />

@@ -218,6 +218,7 @@ public class FogbugzNotifier extends Notifier {
 
         private int mergekeeperUserId;
         private int gatekeeperUserId;
+        @Getter private String mergekeeperFullName;
 
         @Getter private boolean assignBackCase = true;
         @Getter private boolean setMilestone = true;
@@ -308,6 +309,8 @@ public class FogbugzNotifier extends Notifier {
                 gatekeeperid = 1;
             }
             this.gatekeeperUserId = gatekeeperid;
+
+            this.mergekeeperFullName = formData.getString("mergekeeperFullname");
 
             this.failedBuildTemplate = formData.getString("failedBuildTemplate");
             this.successfulBuildTemplate = formData.getString("successfulBuildTemplate");
