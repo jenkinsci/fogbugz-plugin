@@ -13,6 +13,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.paylogic.fogbugz.FogbugzCase;
 import org.paylogic.fogbugz.FogbugzManager;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -25,9 +27,6 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
      * This expression derived/taken from the BNF for URI (RFC2396).
      * Validates URLs
      */
-    private static final String URL_REGEX = "^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\\?([^#]*))?(#(.*))?";
-    private static final Pattern URL_PATTERN = Pattern.compile(URL_REGEX);
-
 
     @Extension
     public static class DescriptorImpl extends BuildWrapperDescriptor {
@@ -60,40 +59,16 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
     public String parseRepoUrl(String featureBranchField) throws Exception {
 
         String repoBase = getRepoBase();
-        Matcher baseUrlMatcher = URL_PATTERN.matcher(repoBase);
-        Matcher repoUrlMatcher = URL_PATTERN.matcher(featureBranchField);
-        String featureRepoUrl;
 
-        // We seem to need to call these, otherwise 'group' method will not work.
-        baseUrlMatcher.matches();
-        repoUrlMatcher.matches();
+        URI baseRepoUrl = new URI(repoBase);
+        URI featureRepoUrl = new URI(featureBranchField);
 
-            /* Logic for recognizing different formats or repository URLs */
-        if (repoUrlMatcher.group(1) != null) {
-            // If repo_path contains startswith one of: ssh:// http:// https://, we assume user put in full path and use that.
-            featureRepoUrl = featureBranchField;
-
-        } else if (repoUrlMatcher.group(5).contains(baseUrlMatcher.group(5).substring(1, baseUrlMatcher.group(5).length()))) {
-            // if repo_path contains part of repoBase, this is probably in format /var/hg/repo#123, so we fix that.
-            // strips first char from baseUrl group 5, which makes //var/hg /var/hg, or /var/hg var/hg, which makes the if match like we want.
-            featureRepoUrl = baseUrlMatcher.group(1) + baseUrlMatcher.group(3);
-            // If protocol is ssh, add extra /
-            if (baseUrlMatcher.group(2).equals("ssh")) {
-                featureRepoUrl += "/";
-            }
-            featureRepoUrl += featureBranchField;
-
-        } else {
-            // else we construct path with base from settings. format probably is users/repo#123 or repo#123, so that works.
-            featureRepoUrl = this.getRepoBase() + featureBranchField;
-        }
-
-        // We test if the resulting URL is a valid one, if not, something went wrong and we quit.
-        if (!featureRepoUrl.matches(URL_REGEX)) {
-            throw new Exception("Error while constructing valid repository URL, we came up with " + featureRepoUrl);
-        }
-
-        return featureRepoUrl;
+        URI res = baseRepoUrl.resolve(featureRepoUrl);
+        // TODO: ugly workaround for mercurial
+        if (repoBase.contains(baseRepoUrl.getHost() + "//")
+                || featureBranchField.toString().contains(featureRepoUrl.getHost() + "//"))
+            return res.toString().replace(res.getHost() + "/",  res.getHost() + "//").replace("///", "//");
+        return res.toString();
     }
 
     /**

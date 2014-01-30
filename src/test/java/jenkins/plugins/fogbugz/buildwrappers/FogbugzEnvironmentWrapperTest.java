@@ -24,6 +24,18 @@ public class FogbugzEnvironmentWrapperTest {
         assertEquals(
                 "ssh://another.code.example.com//var/something#other",
                 wrapper.parseRepoUrl("ssh://another.code.example.com//var/something#other"));
+
+        assertEquals(
+                "hg+ssh://another.code.example.com//var/something#other",
+                wrapper.parseRepoUrl("hg+ssh://another.code.example.com//var/something#other"));
+
+        assertEquals(
+                "ssh://code.example.com//var/hg/unstable/paylogic_pta#pta1404",
+                wrapper.parseRepoUrl("/var/hg/unstable/paylogic_pta#pta1404"));
+
+        assertEquals(
+                "ssh://code.example.com//var/something/test#pta1404",
+                wrapper.parseRepoUrl("/var/something/test#pta1404"));
     }
 
     @Test
