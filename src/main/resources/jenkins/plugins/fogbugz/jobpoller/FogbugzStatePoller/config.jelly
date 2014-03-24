@@ -6,4 +6,7 @@
   <f:entry title="${%CI Project}" field="ciProject">
     <f:textbox />
   </f:entry>
+  <f:entry title="${%CI Project Field}" field="ciProjectField">
+    <f:textbox />
+  </f:entry>
 </j:jelly>

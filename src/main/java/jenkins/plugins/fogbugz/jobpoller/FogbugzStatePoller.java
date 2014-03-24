@@ -6,6 +6,7 @@ import hudson.model.Item;
 import hudson.triggers.TimerTrigger;
 import hudson.triggers.TriggerDescriptor;
 import java.util.List;
+import java.util.logging.Level;
 import jenkins.plugins.fogbugz.jobtrigger.FogbugzEventListener;
 import jenkins.plugins.fogbugz.notifications.FogbugzNotifier;
 import lombok.extern.java.Log;
@@ -23,11 +24,13 @@ import org.paylogic.fogbugz.NoSuchCaseException;
 public class FogbugzStatePoller extends TimerTrigger {
 
     public final String ciProject;
+    public final String ciProjectField;
 
     @DataBoundConstructor
-    public FogbugzStatePoller(String spec, String ciProject) throws ANTLRException {
+    public FogbugzStatePoller(String spec, String ciProject, String ciProjectField) throws ANTLRException {
         super(spec);
         this.ciProject = ciProject;
+        this.ciProjectField = ciProjectField;
     }
 
     @Override
@@ -41,10 +44,12 @@ public class FogbugzStatePoller extends TimerTrigger {
 
         List<FogbugzCase> cases;
         try {
-            cases = fbManager.searchForCases("cixproject:\"" + this.ciProject + "\" assignedto:\"" + user.name + "\"");
+            String query = "%s: \"%s\" assignedto:\"%s\"";
+            query = String.format(query, this.ciProjectField, this.ciProject, user.name);
+            cases = fbManager.searchForCases(query);
         } catch (InvalidResponseException e) {
-            log.info("FogbugzStatePoller encountered an error while getting project list.");
-            log.info(e.getMessage());
+            log.log(Level.SEVERE, "FogbugzStatePoller encountered an error while getting project list.");
+            log.log(Level.SEVERE, e.getMessage());
             return;
         } catch (NoSuchCaseException e) {
             log.info("FogbugzStatePoller found no cases, not running.");
