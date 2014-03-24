@@ -144,6 +144,8 @@ public class FogbugzNotifier extends Notifier {
             } catch (Exception e) {
                 fbCase.setAssignedTo(this.getDescriptor().getGatekeeperUserId());
             }
+            fbCase.removeTag("merging");
+            
         }
 
         /* Fetch&render templates, then save the template output together with the case. */

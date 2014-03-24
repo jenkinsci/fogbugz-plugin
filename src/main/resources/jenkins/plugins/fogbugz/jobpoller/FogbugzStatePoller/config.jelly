@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:entry title="${%Schedule}" field="spec">
+    <f:textarea />
+  </f:entry>
+  <f:entry title="${%CI Project}" field="ciProject">
+    <f:textbox />
+  </f:entry>
+</j:jelly>
