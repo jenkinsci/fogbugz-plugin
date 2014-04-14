@@ -73,6 +73,7 @@ public class FogbugzEventListener implements UnprotectedRootAction {
             } catch (Exception e) {
                 log.log(Level.SEVERE, "No feature branch found in correct format. Aborting trigger...");
                 fbCase = caseManager.assignToGatekeepers(fbCase);
+                fbCase.removeTag("merging");
                 caseManager.saveCase(fbCase, "This case is not suitable for automatic Gatekeepering/Mergekeepering.\n" +
                         "Please merge the case manually.\n" +
                         "If you are sure this case should be automatically gatekeepered, " +
@@ -92,6 +93,7 @@ public class FogbugzEventListener implements UnprotectedRootAction {
                 }
             } catch (Exception e) {
                 fbCase = caseManager.assignToGatekeepers(fbCase);
+                fbCase.removeTag("merging");
                 log.log(Level.SEVERE, "No original branch found in correct format. Aborting trigger...");
                 caseManager.saveCase(fbCase, "This case is not suitable for automatic Gatekeepering/Mergekeepering.\n" +
                         "Please merge the case manually.\n" +
