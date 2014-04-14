@@ -52,6 +52,10 @@ public class FogbugzNotifier extends Notifier {
         return true;
 	}
 
+    private String stringOrEmpty(int param) {
+        return param == 0 ? Integer.toString(param) : "";
+    }
+
     @Override
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
         log.info("Now performing post-build action for Fogbugz reporting.");
@@ -127,14 +131,14 @@ public class FogbugzNotifier extends Notifier {
         templateContext.put(
                 "messages", StringEscapeUtils.unescapeXml(StringEscapeUtils.unescapeHtml(reportingExtraMessage)));
         try {
-            templateContext.put("tests_failed", Integer.toString(build.getTestResultAction().getFailCount()));
-            templateContext.put("tests_skipped", Integer.toString(build.getTestResultAction().getSkipCount()));
-            templateContext.put("tests_total", Integer.toString(build.getTestResultAction().getTotalCount()));
+            templateContext.put("tests_failed", this.stringOrEmpty(build.getTestResultAction().getFailCount()));
+            templateContext.put("tests_skipped", this.stringOrEmpty(build.getTestResultAction().getSkipCount()));
+            templateContext.put("tests_total", this.stringOrEmpty(build.getTestResultAction().getTotalCount()));
         } catch (Exception e) {
             log.log(Level.SEVERE, "Exception during fetching of test results:", e);
-            templateContext.put("tests_failed", "unknown");
-            templateContext.put("tests_skipped", "unknown");
-            templateContext.put("tests_total", "unknown");
+            templateContext.put("tests_failed", "");
+            templateContext.put("tests_skipped", "");
+            templateContext.put("tests_total", "");
         }
 
         /* Assign the case back to detected developer. */

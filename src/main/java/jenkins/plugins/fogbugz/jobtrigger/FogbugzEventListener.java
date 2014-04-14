@@ -35,7 +35,7 @@ public class FogbugzEventListener implements UnprotectedRootAction {
         return "fbTrigger";
     }
 
-    public void doIndex(@QueryParameter(required = true) int caseid) {
+    public void doIndex(@QueryParameter(required = true) int caseid, @QueryParameter(required = true) String jobname) {
         if (caseid == 0) {
             return;
         }
@@ -105,8 +105,7 @@ public class FogbugzEventListener implements UnprotectedRootAction {
 
         // Search for Job that'll be triggered.
         for (Project<?, ?> p: Jenkins.getInstance().getItems(Project.class)) {
-            if (p.getName().equals(new FogbugzNotifier().getDescriptor().getJob_to_trigger())) {
-
+            if (p.getName().equals(jobname)) {
                 // Fetch default Parameters
                 ParametersDefinitionProperty property = p.getProperty(ParametersDefinitionProperty.class);
                 final List<ParameterValue> parameters = new ArrayList<ParameterValue>();

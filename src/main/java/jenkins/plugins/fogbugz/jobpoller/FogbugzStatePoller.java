@@ -44,7 +44,7 @@ public class FogbugzStatePoller extends TimerTrigger {
 
         List<FogbugzCase> cases;
         try {
-            String query = "%s: \"%s\" assignedto:\"%s\"";
+            String query = "%s:\"%s\" assignedto:\"%s\"";
             query = String.format(query, this.ciProjectField, this.ciProject, user.name);
             cases = fbManager.searchForCases(query);
         } catch (InvalidResponseException e) {
@@ -59,7 +59,7 @@ public class FogbugzStatePoller extends TimerTrigger {
             if (!c.getTags().contains("merging")) {
                 c.addTag("merging");
                 fbManager.saveCase(c);
-                fbListener.doIndex(c.getId());
+                fbListener.doIndex(c.getId(), this.job.getName());
             }
         }
 
