@@ -1,7 +1,8 @@
 package jenkins.plugins.fogbugz.notifications;
 
-import com.samskivert.mustache.Mustache;
-import com.samskivert.mustache.Template;
+import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.Template;
+import com.github.jknack.handlebars.Context;
 
 import hudson.EnvVars;
 import jenkins.plugins.fogbugz.FogbugzProjectProperty;
@@ -123,22 +124,22 @@ public class FogbugzNotifier extends Notifier {
         FogbugzEvent lastAssignmentEvent = caseManager.getLastAssignedToGatekeepersEvent(fbCase.getId());
 
         /* Fill template context with useful variables. */
-        Map<String, String> templateContext = new HashMap();
-        templateContext.put("url", build.getAbsoluteUrl());
-        templateContext.put("buildNumber", Integer.toString(build.getNumber()));
-        templateContext.put("buildResult", build.getResult().toString());
+        Context templateContext = Context.newContext(null);
+        templateContext.data("url", build.getAbsoluteUrl());
+        templateContext.data("buildNumber", Integer.toString(build.getNumber()));
+        templateContext.data("buildResult", build.getResult().toString());
         log.log(Level.FINE, "ReportingExtraMessage: " + reportingExtraMessage);
-        templateContext.put(
+        templateContext.data(
                 "messages", StringEscapeUtils.unescapeXml(StringEscapeUtils.unescapeHtml(reportingExtraMessage)));
         try {
-            templateContext.put("tests_failed", this.stringOrEmpty(build.getTestResultAction().getFailCount()));
-            templateContext.put("tests_skipped", this.stringOrEmpty(build.getTestResultAction().getSkipCount()));
-            templateContext.put("tests_total", this.stringOrEmpty(build.getTestResultAction().getTotalCount()));
+            templateContext.data("tests_failed", build.getTestResultAction().getFailCount());
+            templateContext.data("tests_skipped", build.getTestResultAction().getSkipCount());
+            templateContext.data("tests_total", build.getTestResultAction().getTotalCount());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Exception during fetching of test results:", e);
-            templateContext.put("tests_failed", "");
-            templateContext.put("tests_skipped", "");
-            templateContext.put("tests_total", "");
+            templateContext.data("tests_failed", "");
+            templateContext.data("tests_skipped", "");
+            templateContext.data("tests_total", "");
         }
 
         /* Assign the case back to detected developer. */
@@ -154,9 +155,14 @@ public class FogbugzNotifier extends Notifier {
 
         /* Fetch&render templates, then save the template output together with the case. */
         Template mustacheTemplate;
+        Handlebars handlebars = new Handlebars();
         if (build.getResult() == Result.SUCCESS) {
-            mustacheTemplate = Mustache.compiler().compile(this.getDescriptor().getSuccessfulBuildTemplate());
-
+            try {
+                mustacheTemplate = handlebars.compileInline(this.getDescriptor().getSuccessfulBuildTemplate());
+            }
+            catch (IOException e) {
+                mustacheTemplate = null;
+            }
             // Add tag if required
             if (this.getDescriptor().getSuccessfulBuildTag() != null && !this.getDescriptor().getSuccessfulBuildTag().isEmpty()) {
                 fbCase.addTag(this.getDescriptor().getSuccessfulBuildTag());
@@ -174,10 +180,23 @@ public class FogbugzNotifier extends Notifier {
                 }
             }
         } else {
-            mustacheTemplate = Mustache.compiler().compile(this.getDescriptor().getFailedBuildTemplate());
+            try {
+                mustacheTemplate = handlebars.compileInline(this.getDescriptor().getFailedBuildTemplate());
+            }
+            catch (IOException e) {
+                mustacheTemplate = null;
+            }
         }
         /* Save case, this propagates the changes made on the case object */
-        caseManager.saveCase(fbCase, mustacheTemplate.execute(templateContext));
+        String message = "Error rendering template during reporting! Please check jenkins configuration.";
+        if (mustacheTemplate != null) {
+            try {
+                message = mustacheTemplate.apply(templateContext);
+            }
+            catch (IOException e) {
+            }
+        }
+        caseManager.saveCase(fbCase, message);
 
         return true;
     }
