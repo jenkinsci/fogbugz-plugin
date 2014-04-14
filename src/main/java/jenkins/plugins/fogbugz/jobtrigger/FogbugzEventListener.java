@@ -85,7 +85,12 @@ public class FogbugzEventListener implements UnprotectedRootAction {
         // TODO: Remove this very process specific part, and replace it with an extension point.
         if (!fbNotifier.getReleaseBranchRegex().isEmpty() && !fbNotifier.getDescriptor().getOriginalBranchFieldname().isEmpty()) {
             // Here, we check if case is correct release, else return error message.
-            if (!fbCase.getOriginalBranch().matches(fbNotifier.getReleaseBranchRegex())) {
+            try {
+                String originalBranch = fbCase.getOriginalBranch().split("#")[1];
+                if (!originalBranch.matches(fbNotifier.getReleaseBranchRegex())) {
+                    throw new Exception();
+                }
+            } catch (Exception e) {
                 fbCase = caseManager.assignToGatekeepers(fbCase);
                 log.log(Level.SEVERE, "No original branch found in correct format. Aborting trigger...");
                 caseManager.saveCase(fbCase, "This case is not suitable for automatic Gatekeepering/Mergekeepering.\n" +
