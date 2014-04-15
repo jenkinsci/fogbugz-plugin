@@ -53,7 +53,12 @@
 	    <f:textarea />
 	</f:entry>
 
-	<f:entry title="Default Job to trigger on incoming Fogbugz event. (required if you want to use trigger url)" field="job_to_trigger"
+    <f:entry title="Template for scheduled builds" field="scheduledBuildTemplate"
+           description="This template will be parsed by mustache and then be sent to fogbugz as comment on case edit.">
+      <f:textarea />
+    </f:entry>
+
+      <f:entry title="Default Job to trigger on incoming Fogbugz event. (required if you want to use trigger url)" field="job_to_trigger"
 	        description="The full name of the Job to trigger on incoming Fogbugz event">
 	        <f:textbox />
 	</f:entry>
@@ -73,14 +78,5 @@
 	        <f:textbox />
     </f:entry>
 
-	<f:entry title="Regex for feature branch validation. (required)" field="featureBranchRegex"
-	        description="A Java readable regular expression to validate feature branch names with.">
-        <f:textbox />
-	</f:entry>
-
-	<f:entry title="Regex for release branch validation. (required)" field="releaseBranchRegex"
-	        description="A Java readable regular expression to validate release branch names with.">
-        <f:textbox />
-	</f:entry>
   </f:section>
 </j:jelly>

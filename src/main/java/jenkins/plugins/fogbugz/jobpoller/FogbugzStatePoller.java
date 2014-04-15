@@ -3,6 +3,7 @@ package jenkins.plugins.fogbugz.jobpoller;
 import antlr.ANTLRException;
 import hudson.Extension;
 import hudson.model.Item;
+import hudson.model.Job;
 import hudson.triggers.TimerTrigger;
 import hudson.triggers.TriggerDescriptor;
 import java.util.List;
@@ -56,10 +57,9 @@ public class FogbugzStatePoller extends TimerTrigger {
             return;
         }
         for (FogbugzCase c : cases) {
-            if (!c.getTags().contains("merging")) {
-                c.addTag("merging");
-                fbManager.saveCase(c);
-                fbListener.doIndex(c.getId(), this.job.getName());
+            Job job = (Job)this.job;
+            if (!job.isBuilding() && !job.isInQueue()) {
+                fbListener.scheduleJob(c.getId(), this.job.getName());
             }
         }
 

@@ -151,8 +151,6 @@ public class FogbugzNotifier extends Notifier {
             }
         }
 
-        fbCase.removeTag("merging");
-
         /* Fetch&render templates, then save the template output together with the case. */
         Template mustacheTemplate;
         Handlebars handlebars = new Handlebars();
@@ -172,12 +170,10 @@ public class FogbugzNotifier extends Notifier {
             // TODO: again, replace this with an extension point, as this is very process specific.
             if (this.getDescriptor().doAssignBaseCase()) {
                 // Milestone should be set to 'target branch' without the 'r' in front of the release number.
-                if (fbCase.getTargetBranch().matches(this.getReleaseBranchRegex())) {
-                    // Strip 'r' from release number and set as milestone (creating one if not exists).
-                    String milestoneName = fbCase.getTargetBranch().substring(1, fbCase.getTargetBranch().length());
-                    caseManager.createMilestoneIfNotExists(milestoneName);
-                    fbCase.setMilestone(milestoneName);
-                }
+                // Strip 'r' from release number and set as milestone (creating one if not exists).
+                String milestoneName = fbCase.getTargetBranch().substring(1, fbCase.getTargetBranch().length());
+                caseManager.createMilestoneIfNotExists(milestoneName);
+                fbCase.setMilestone(milestoneName);
             }
         } else {
             try {
@@ -201,6 +197,30 @@ public class FogbugzNotifier extends Notifier {
         return true;
     }
 
+    public void notifyScheduled(FogbugzCase fbCase, Project<?, ?> p) {
+        Context templateContext = Context.newContext(null);
+        templateContext.data("url", p.getAbsoluteUrl());
+        templateContext.data("name", p.getName());
+        Template mustacheTemplate;
+        Handlebars handlebars = new Handlebars();
+        try {
+            mustacheTemplate = handlebars.compileInline(this.getDescriptor().getScheduledBuildTemplate());
+        }
+        catch (IOException e) {
+            mustacheTemplate = null;
+        }
+        /* Save case, this propagates the changes made on the case object */
+        String message = "Error rendering scheduled template during reporting! Please check jenkins configuration.";
+        if (mustacheTemplate != null) {
+            try {
+                message = mustacheTemplate.apply(templateContext);
+            }
+            catch (IOException e) {
+            }
+        }
+        this.getFogbugzManager().saveCase(fbCase, message);
+    }
+
     public DescriptorImpl getDescriptor() {
         return (DescriptorImpl)super.getDescriptor();
     }
@@ -215,15 +235,6 @@ public class FogbugzNotifier extends Notifier {
     }
 
 
-    public String getReleaseBranchRegex() {
-        return this.getDescriptor().getReleaseBranchRegex();
-    }
-
-    public String getFeatureBranchRegex() {
-        return this.getDescriptor().getFeatureBranchRegex();
-    }
-
-
     /**
      * Global settings for FogbugzPlugin.
      * Suggestion: move this to it's own class to keep this file small.
@@ -234,6 +245,7 @@ public class FogbugzNotifier extends Notifier {
 
         private String failedBuildTemplate;
         private String successfulBuildTemplate;
+        private String scheduledBuildTemplate;
 
         @Getter private String featureBranchFieldname;
         @Getter private String originalBranchFieldname;
@@ -248,9 +260,6 @@ public class FogbugzNotifier extends Notifier {
         @Getter private boolean assignBackCase = true;
         @Getter private boolean setMilestone = true;
         @Getter private String successfulBuildTag = "";
-
-        @Getter private String featureBranchRegex = "c\\d+";
-        @Getter private String releaseBranchRegex = "r\\d{4}";
 
         public String getUrl() {
             return new FogbugzProjectProperty().getDescriptor().getUrl();
@@ -300,6 +309,16 @@ public class FogbugzNotifier extends Notifier {
             }
         }
 
+
+        public String getScheduledBuildTemplate() {
+            if (this.scheduledBuildTemplate == null || this.scheduledBuildTemplate.isEmpty()) {
+                return "Scheduled a jenkins build on a {{name}} job. Stay tuned!" +
+                        "\nView the job here: {{url}}";
+            } else {
+                return this.scheduledBuildTemplate;
+            }
+        }
+
         public DescriptorImpl() {
             super();
             load();
@@ -337,14 +356,11 @@ public class FogbugzNotifier extends Notifier {
 
             this.failedBuildTemplate = formData.getString("failedBuildTemplate");
             this.successfulBuildTemplate = formData.getString("successfulBuildTemplate");
-            this.job_to_trigger = formData.getString("job_to_trigger");
+            this.scheduledBuildTemplate = formData.getString("scheduledBuildTemplate");
 
             this.assignBackCase = formData.getBoolean("assignBackCase");
             this.setMilestone = formData.getBoolean("setMilestone");
             this.successfulBuildTag = formData.getString("successfulBuildTag");
-
-            this.releaseBranchRegex = formData.getString("releaseBranchRegex");
-            this.featureBranchRegex = formData.getString("featureBranchRegex");
 
             save();
             return super.configure(req, formData);

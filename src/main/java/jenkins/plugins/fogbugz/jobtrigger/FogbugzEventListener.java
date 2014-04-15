@@ -36,9 +36,6 @@ public class FogbugzEventListener implements UnprotectedRootAction {
     }
 
     public void doIndex(@QueryParameter(required = true) int caseid, @QueryParameter(required = true) String jobname) {
-        if (caseid == 0) {
-            return;
-        }
         log.info("Fogbugz URLTrigger received, processing...");
 
         FogbugzNotifier fbNotifier = new FogbugzNotifier();
@@ -47,6 +44,15 @@ public class FogbugzEventListener implements UnprotectedRootAction {
             // Skip all of this, user has 'disabled' trigger.
             return;
         }
+        scheduleJob(caseid, jobname);
+    }
+
+    public void scheduleJob(int caseid, String jobname) {
+        if (caseid == 0) {
+            return;
+        }
+
+        FogbugzNotifier fbNotifier = new FogbugzNotifier();
 
         FogbugzManager caseManager = fbNotifier.getFogbugzManager();
         FogbugzCase fbCase = null;
@@ -57,71 +63,32 @@ public class FogbugzEventListener implements UnprotectedRootAction {
             return;
         }
 
-        for (String tag : fbCase.getTags()) {
-            if (tag.equals("autocreated")) {
-                // Then do not process this case until the tag is removed.
-                return;
-            }
-        }
-
-        // Check for correct format of feature branch if regex and field name are set.
-        // TODO: Remove this very process specific part, and replace it with an extension point.
-        if (!fbNotifier.getFeatureBranchRegex().isEmpty() && !fbNotifier.getDescriptor().getFeatureBranchFieldname().isEmpty()) {
-            String featureBranch = "";
-            try {
-                featureBranch = fbCase.getFeatureBranch().split("#")[1];
-            } catch (Exception e) {
-                log.log(Level.SEVERE, "No feature branch found in correct format. Aborting trigger...");
-                fbCase = caseManager.assignToGatekeepers(fbCase);
-                fbCase.removeTag("merging");
-                caseManager.saveCase(fbCase, "This case is not suitable for automatic Gatekeepering/Mergekeepering.\n" +
-                        "Please merge the case manually.\n" +
-                        "If you are sure this case should be automatically gatekeepered, " +
-                        "set the 'feature branch' field correctly, eg: 'maikel/repo#c1337' and try again.");
-                return;
-            }
-        }
-
-        // Check for correct format of release branch if regex and field name are set.
-        // TODO: Remove this very process specific part, and replace it with an extension point.
-        if (!fbNotifier.getReleaseBranchRegex().isEmpty() && !fbNotifier.getDescriptor().getOriginalBranchFieldname().isEmpty()) {
-            // Here, we check if case is correct release, else return error message.
-            try {
-                String originalBranch = fbCase.getOriginalBranch().split("#")[1];
-                if (!originalBranch.matches(fbNotifier.getReleaseBranchRegex())) {
-                    throw new Exception();
-                }
-            } catch (Exception e) {
-                fbCase = caseManager.assignToGatekeepers(fbCase);
-                fbCase.removeTag("merging");
-                log.log(Level.SEVERE, "No original branch found in correct format. Aborting trigger...");
-                caseManager.saveCase(fbCase, "This case is not suitable for automatic Gatekeepering/Mergekeepering.\n" +
-                        "Please merge the case manually.\n" +
-                        "If you are sure this case should be automatically gatekeepered, " +
-                        "set the 'original branch' field correctly, eg: 'r1350' and try again.");
-                return;
-            }
+        if (fbCase.hasTag("autocreated")) {
+            // Then do not process this case until the tag is removed.
+            return;
         }
 
         // Search for Job that'll be triggered.
         for (Project<?, ?> p: Jenkins.getInstance().getItems(Project.class)) {
             if (p.getName().equals(jobname)) {
                 // Fetch default Parameters
-                ParametersDefinitionProperty property = p.getProperty(ParametersDefinitionProperty.class);
                 final List<ParameterValue> parameters = new ArrayList<ParameterValue>();
-                for (final ParameterDefinition pd : property.getParameterDefinitions()) {
-                    final ParameterValue param = pd.getDefaultParameterValue();
-                    // Fill in CASE_ID
-                    if (pd.getName().equals("CASE_ID")) {  // Override CASE_ID param if it's there.
-                        parameters.add(new StringParameterValue("CASE_ID", Integer.toString(fbCase.getId())));
-                    // Else, just add the value already set.
-                    } else if (param != null) {
-                        parameters.add(param);
+                ParametersDefinitionProperty property = p.getProperty(ParametersDefinitionProperty.class);
+                if (property != null) {
+                    for (final ParameterDefinition pd : property.getParameterDefinitions()) {
+                        final ParameterValue param = pd.getDefaultParameterValue();
+                        // Fill in CASE_ID
+                        if (pd.getName().equals("CASE_ID")) {  // Override CASE_ID param if it's there.
+                            parameters.add(new StringParameterValue("CASE_ID", Integer.toString(fbCase.getId())));
+                            // Else, just add the value already set.
+                        } else if (param != null) {
+                            parameters.add(param);
+                        }
                     }
                 }
-
                 // Here, we actually schedule the build.
                 p.scheduleBuild2(0, new FogbugzBuildCause(), new ParametersAction(parameters));
+                fbNotifier.notifyScheduled(fbCase, p);
             }
         }
     }
