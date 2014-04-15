@@ -252,8 +252,6 @@ public class FogbugzNotifier extends Notifier {
         @Getter private String targetBranchFieldname;
         @Getter private String approvedRevisionFieldname;
 
-        @Getter private String job_to_trigger;
-
         private int mergekeeperUserId;
         private int gatekeeperUserId;
 

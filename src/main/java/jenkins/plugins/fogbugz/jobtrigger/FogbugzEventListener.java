@@ -37,13 +37,6 @@ public class FogbugzEventListener implements UnprotectedRootAction {
 
     public void doIndex(@QueryParameter(required = true) int caseid, @QueryParameter(required = true) String jobname) {
         log.info("Fogbugz URLTrigger received, processing...");
-
-        FogbugzNotifier fbNotifier = new FogbugzNotifier();
-
-        if (fbNotifier.getDescriptor().getJob_to_trigger().isEmpty()) {
-            // Skip all of this, user has 'disabled' trigger.
-            return;
-        }
         scheduleJob(caseid, jobname);
     }
 

@@ -58,11 +58,6 @@
       <f:textarea />
     </f:entry>
 
-      <f:entry title="Default Job to trigger on incoming Fogbugz event. (required if you want to use trigger url)" field="job_to_trigger"
-	        description="The full name of the Job to trigger on incoming Fogbugz event">
-	        <f:textbox />
-	</f:entry>
-
 	<f:entry title="Assign back case to developer that assigned to 'gatekeeper' user on end of build." field="assignBackCase"
 	        description="Enabling this will assign back the case to the developer that assigned the case to the 'mergekeepers' user.">
 	        <f:checkbox />
