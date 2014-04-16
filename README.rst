@@ -6,7 +6,7 @@ Supports the following operations:
 
 - Recognizing and providing links to cases in SCM log (since 1.0)
 - Creating a new case in Fogbugz if the build starts to fail (since 2.0)
-- Trigger build using an URLTrigger in Fogbugz (since 2.0)
+- Poll Fogbuz for cases to be triggered builds with
 - Reporting build status to Fogbugz by editing the case and posting a message * (since 2.0)
 - Creating a build action so a link to the Fogbugz case this build was triggered from / belongs to is shown * (since 2.0)
 
