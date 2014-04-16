@@ -36,6 +36,11 @@
             <name>Anatoly Bubenkov</name>
             <email>bubenkoff@gmail.com</email>
         </developer>
+        <developer>
+            <id>dzittersteyn</id>
+            <name>Dirk Zittersteyn</name>
+            <email>zittersteyn@gmail.com</email>
+        </developer>
     </developers>
 
     <dependencies>
