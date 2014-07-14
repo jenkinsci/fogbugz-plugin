@@ -1,9 +1,8 @@
 package jenkins.plugins.fogbugz.buildwrappers;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-import jenkins.plugins.fogbugz.buildwrappers.FogbugzEnvironmentWrapper;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by bubenkoff on 1/21/14.
@@ -26,7 +25,7 @@ public class FogbugzEnvironmentWrapperTest {
                 wrapper.parseRepoUrl("ssh://another.code.example.com//var/something#other"));
 
         assertEquals(
-                "hg+ssh://another.code.example.com//var/something#other",
+                "ssh://another.code.example.com//var/something#other",
                 wrapper.parseRepoUrl("hg+ssh://another.code.example.com//var/something#other"));
 
         assertEquals(
@@ -36,6 +35,12 @@ public class FogbugzEnvironmentWrapperTest {
         assertEquals(
                 "ssh://code.example.com//var/something/test#pta1404",
                 wrapper.parseRepoUrl("/var/something/test#pta1404"));
+
+        wrapper = new FogbugzEnvironmentWrapper(true, "https://code.example.com/var/hg/users/");
+        assertEquals(
+                "https://code.example.com/var/something/test#pta1404",
+                wrapper.parseRepoUrl("git+https://code.example.com/var/something/test#pta1404"));
+
     }
 
     @Test

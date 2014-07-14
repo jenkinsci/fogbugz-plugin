@@ -28,6 +28,8 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
      * Validates URLs
      */
 
+    private Pattern BRANCH_URL_PATTERN = Pattern.compile("^(?<vcs>\\w+\\+)?(?<url>.*)");
+
     @Extension
     public static class DescriptorImpl extends BuildWrapperDescriptor {
         @Override
@@ -61,12 +63,20 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
         String repoBase = getRepoBase();
 
         URI baseRepoUrl = new URI(repoBase);
-        URI featureRepoUrl = new URI(featureBranchField);
 
+        Matcher matcher = this.BRANCH_URL_PATTERN.matcher(featureBranchField);
+        matcher.matches();
+        matcher.group();
+        boolean fullURL = false;
+        if (matcher.group("vcs") != null) {
+            featureBranchField = matcher.group("url");
+            fullURL = true;
+        }
+        URI featureRepoUrl = new URI(featureBranchField);
         URI res = baseRepoUrl.resolve(featureRepoUrl);
         // TODO: ugly workaround for mercurial
-        if (repoBase.contains(baseRepoUrl.getHost() + "//")
-                || featureBranchField.toString().contains(featureRepoUrl.getHost() + "//"))
+        if (!fullURL && (repoBase.contains(baseRepoUrl.getHost() + "//")
+                || featureBranchField.toString().contains(featureRepoUrl.getHost() + "//")))
             return res.toString().replace(res.getHost() + "/",  res.getHost() + "//").replace("///", "//");
         return res.toString();
     }
