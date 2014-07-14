@@ -28,7 +28,7 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
      * Validates URLs
      */
 
-    private Pattern BRANCH_URL_PATTERN = Pattern.compile("^(?<vcs>\\w+\\+)?(?<url>.*)");
+    private Pattern BRANCH_URL_PATTERN = Pattern.compile("^(?<vcs>\\w+\\+)?(?<url>.+)#(?<branch>.+)");
 
     @Extension
     public static class DescriptorImpl extends BuildWrapperDescriptor {
@@ -68,10 +68,7 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
         matcher.matches();
         matcher.group();
         boolean fullURL = false;
-        if (matcher.group("vcs") != null) {
-            featureBranchField = matcher.group("url");
-            fullURL = true;
-        }
+        featureBranchField = matcher.group("url");
         URI featureRepoUrl = new URI(featureBranchField);
         URI res = baseRepoUrl.resolve(featureRepoUrl);
         // TODO: ugly workaround for mercurial

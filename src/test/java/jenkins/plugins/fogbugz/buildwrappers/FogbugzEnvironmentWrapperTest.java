@@ -13,32 +13,32 @@ public class FogbugzEnvironmentWrapperTest {
     public void testParseRepoUrl() throws Exception {
         FogbugzEnvironmentWrapper wrapper = new FogbugzEnvironmentWrapper(true, "ssh://code.example.com//var/hg/users/");
         assertEquals(
-                "ssh://code.example.com//var/hg/users/anatoly#test",
+                "ssh://code.example.com//var/hg/users/anatoly",
                 wrapper.parseRepoUrl("anatoly#test"));
 
         assertEquals(
-                "ssh://code.example.com//var/hg/users/something/other#test",
+                "ssh://code.example.com//var/hg/users/something/other",
                 wrapper.parseRepoUrl("something/other#test"));
 
         assertEquals(
-                "ssh://another.code.example.com//var/something#other",
+                "ssh://another.code.example.com//var/something",
                 wrapper.parseRepoUrl("ssh://another.code.example.com//var/something#other"));
 
         assertEquals(
-                "ssh://another.code.example.com//var/something#other",
+                "ssh://another.code.example.com//var/something",
                 wrapper.parseRepoUrl("hg+ssh://another.code.example.com//var/something#other"));
 
         assertEquals(
-                "ssh://code.example.com//var/hg/unstable/paylogic_pta#pta1404",
+                "ssh://code.example.com//var/hg/unstable/paylogic_pta",
                 wrapper.parseRepoUrl("/var/hg/unstable/paylogic_pta#pta1404"));
 
         assertEquals(
-                "ssh://code.example.com//var/something/test#pta1404",
+                "ssh://code.example.com//var/something/test",
                 wrapper.parseRepoUrl("/var/something/test#pta1404"));
 
         wrapper = new FogbugzEnvironmentWrapper(true, "");
         assertEquals(
-                "https://code.example.com/var/something/test#pta1404",
+                "https://code.example.com/var/something/test",
                 wrapper.parseRepoUrl("git+https://code.example.com/var/something/test#pta1404"));
 
     }
