@@ -117,15 +117,12 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
             return null;
         }
 
-        // If repo base exists, fill in REPO_URL as well.
-        if (getRepoBase() != null && !getRepoBase().isEmpty()) {
-            try {
-                String repoUrl = this.parseRepoUrl(fbCase.getFeatureBranch());
-                envVars.put("REPO_URL", repoUrl);
-            } catch (Exception e) {
-                log.log(Level.INFO, "Error while parsing repo url, not continuing with build", e);
-                return null;
-            }
+        try {
+            String repoUrl = this.parseRepoUrl(fbCase.getFeatureBranch());
+            envVars.put("REPO_URL", repoUrl);
+        } catch (Exception e) {
+            log.log(Level.INFO, "Error while parsing repo url, not continuing with build", e);
+            return null;
         }
 
         // Put case values into map

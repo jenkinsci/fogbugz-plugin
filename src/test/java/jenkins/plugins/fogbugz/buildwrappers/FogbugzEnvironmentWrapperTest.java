@@ -36,7 +36,7 @@ public class FogbugzEnvironmentWrapperTest {
                 "ssh://code.example.com//var/something/test#pta1404",
                 wrapper.parseRepoUrl("/var/something/test#pta1404"));
 
-        wrapper = new FogbugzEnvironmentWrapper(true, "https://code.example.com/var/hg/users/");
+        wrapper = new FogbugzEnvironmentWrapper(true, "");
         assertEquals(
                 "https://code.example.com/var/something/test#pta1404",
                 wrapper.parseRepoUrl("git+https://code.example.com/var/something/test#pta1404"));
