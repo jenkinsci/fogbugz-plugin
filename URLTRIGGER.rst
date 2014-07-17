@@ -2,8 +2,10 @@ Linking Jenkins with FogBugz using URLTrigger plugin for FogBugz
 ================================================================
 
 
-By default, Fogbugz ships with an urltrigger plugin. This plugin does a GET request to the specified URL on a specified event.
-To set up your Fogbugz urltrigger so Jenkins will build when the case is assigned to 'Mergekeepers', follow these instructions.
+By default, Fogbugz ships with an urltrigger plugin. This plugin does a GET request to the specified URL on a
+specified event.
+To set up your Fogbugz urltrigger so Jenkins will build when the case is assigned to 'Mergekeepers',
+follow these instructions.
 This assumes the trigger account is called 'Mergekeepers'. Of course you can customize this behaviour.
 
 
