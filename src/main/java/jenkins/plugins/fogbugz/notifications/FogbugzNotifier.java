@@ -6,6 +6,7 @@ import com.github.jknack.handlebars.Context;
 
 import hudson.EnvVars;
 import jenkins.plugins.fogbugz.FogbugzProjectProperty;
+import lombok.Setter;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import hudson.Extension;
@@ -251,6 +252,7 @@ public class FogbugzNotifier extends Notifier {
         @Getter private String originalBranchFieldname;
         @Getter private String targetBranchFieldname;
         @Getter private String approvedRevisionFieldname;
+        @Getter private String ciProjectFieldName;
 
         private int mergekeeperUserId;
         private int gatekeeperUserId;
@@ -339,6 +341,7 @@ public class FogbugzNotifier extends Notifier {
             this.originalBranchFieldname = formData.getString("originalBranchFieldname");
             this.targetBranchFieldname = formData.getString("targetBranchFieldname");
             this.approvedRevisionFieldname = formData.getString("approvedRevisionFieldname");
+            this.ciProjectFieldName = formData.getString("ciProjectFieldName");
 
             int mergekeeperid = formData.getInt("mergekeeperUserId");
             if (mergekeeperid == 0) {
@@ -372,6 +375,7 @@ public class FogbugzNotifier extends Notifier {
         public FogbugzManager getFogbugzManager() {
             return new FogbugzManager(this.getUrl(), this.getToken(), this.getFeatureBranchFieldname(),
                     this.getOriginalBranchFieldname(), this.getTargetBranchFieldname(), this.getApprovedRevisionFieldname(),
+                    this.getCiProjectFieldName(),
                     this.getMergekeeperUserId(), this.getGatekeeperUserId());
         }
 

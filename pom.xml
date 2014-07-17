@@ -43,6 +43,10 @@
         </developer>
     </developers>
 
+    <properties>
+        <powermock.version>1.5.2</powermock.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.jenkins-ci.main</groupId>
@@ -52,7 +56,7 @@
         <dependency>
             <groupId>org.paylogic</groupId>   <!-- This artifact contains API interface for FogBugz 7+           -->
             <artifactId>Fogbugz</artifactId>  <!-- The artifact is published on maven central repo               -->
-            <version>[2.2.5,)</version>       <!-- You can find the source on github.com/paylogic/java-fogbugz   -->
+            <version>[2.2.6,)</version>       <!-- You can find the source on github.com/paylogic/java-fogbugz   -->
                                               <!-- Feel free to send us a pull-request if you want more features -->
         </dependency>
         <dependency>
@@ -74,6 +78,17 @@
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>envinject</artifactId>
             <version>1.89</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>findbugs</groupId>
+            <artifactId>annotations</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

@@ -13,8 +13,10 @@ This assumes the trigger account is called 'Mergekeepers'. Of course you can cus
 - Click the edit icon (white paper with yellow pencil) right of `URLTrigger`.
 - Add a new trigger to the following specifications:
   - React on event type `CaseAssigned` only, as this hook will trigger a build.
-  - `URL` is `<url_to_jenkins>/fbTrigger/?caseid={CaseNumber}`.
+  - `URL` is `<url_to_jenkins>/fbTrigger/?caseid={CaseNumber}[&jobnamepostfix=_Mergekeepers|jobname=Project_Mergekeepers][&ciprojectfieldname=cixproject]`.
   - Set `filter` to `AssignedToName = "Mergekeepers"`.
-  - Set a name if you want to, it's not required.
+  - Set a jobnamepostfix if you want to, it's not required.
+  - Set a jobname if you want to, it's not required.
+  - Set a cixproject if you want to, it's not required.
   - Click `OK` to save the trigger.
 - Profit!

@@ -6,9 +6,13 @@ import jenkins.model.Jenkins;
 import jenkins.plugins.fogbugz.notifications.FogbugzNotifier;
 import lombok.extern.java.Log;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.StaplerResponse;
 import org.paylogic.fogbugz.FogbugzCase;
 import org.paylogic.fogbugz.FogbugzManager;
+import org.paylogic.fogbugz.InvalidResponseException;
+import org.paylogic.fogbugz.NoSuchCaseException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,6 +27,14 @@ import java.util.logging.Level;
 @Extension
 public class FogbugzEventListener implements UnprotectedRootAction {
 
+    private static String NO_CASE_FOUND_RESPONSE = "<html><body>No case found</body></html>";
+
+    private static String FOGBUGZ_ERROR_RESPONSE = "<html><body>Error communicating with fogbugz</body></html>";
+
+    private static String CASE_IS_AUTOCREATED_RESPONSE = "<html><body>Case is autocreated, skipping</body></html>";
+
+    private static String OK_RESPONSE = "<html><body>Scheduled ok</body></html>";
+
     public String getIconFileName() {
         return null;
     }
@@ -35,30 +47,47 @@ public class FogbugzEventListener implements UnprotectedRootAction {
         return "fbTrigger";
     }
 
-    public void doIndex(@QueryParameter(required = true) int caseid, @QueryParameter(required = true) String jobname) {
+    public void doIndex(StaplerResponse rsp, @QueryParameter(required = true) int caseid,
+                          @QueryParameter(required = false) String jobname,
+                          @QueryParameter(required = false) String jobnamepostfix,
+                          @QueryParameter(required = false) String ciprojectfieldname) throws IOException {
+        rsp.setContentType("text/html");
         log.info("Fogbugz URLTrigger received, processing...");
-        scheduleJob(caseid, jobname);
+        FogbugzNotifier fbNotifier = new FogbugzNotifier();
+        String response = scheduleJob(fbNotifier, caseid, jobname, jobnamepostfix, ciprojectfieldname);
+        rsp.getOutputStream().write(response.getBytes());
     }
 
-    public void scheduleJob(int caseid, String jobname) {
-        if (caseid == 0) {
-            return;
+    public String scheduleJob(FogbugzNotifier fbNotifier, int caseid, String jobname, String jobnamepostfix,
+                              String ciprojectfieldname) {
+        if (caseid < 1) {
+            return NO_CASE_FOUND_RESPONSE;
         }
 
-        FogbugzNotifier fbNotifier = new FogbugzNotifier();
-
         FogbugzManager caseManager = fbNotifier.getFogbugzManager();
+        if (ciprojectfieldname != null && !ciprojectfieldname.isEmpty()) {
+            caseManager.setCiProjectFieldName(ciprojectfieldname);
+        }
         FogbugzCase fbCase = null;
         try {
             fbCase = caseManager.getCaseById(caseid);
-        } catch (Exception e) {
-            log.log(Level.INFO, "No case found with this id, not triggering anything.", e);
-            return;
+        } catch (NoSuchCaseException e) {
+            log.log(Level.INFO, "No case found with this id, not triggering anything.", caseid);
+            return NO_CASE_FOUND_RESPONSE;
+        } catch (InvalidResponseException e) {
+            log.log(Level.INFO, "Error getting case by id.", e);
+            return FOGBUGZ_ERROR_RESPONSE;
         }
 
         if (fbCase.hasTag("autocreated")) {
             // Then do not process this case until the tag is removed.
-            return;
+            return CASE_IS_AUTOCREATED_RESPONSE;
+        }
+
+        String ciProject = fbCase.getCiProject();
+
+        if (ciProject != null && !ciProject.isEmpty()) {
+            jobname =  ciProject + jobnamepostfix;
         }
 
         // Search for Job that'll be triggered.
@@ -84,5 +113,6 @@ public class FogbugzEventListener implements UnprotectedRootAction {
                 fbNotifier.notifyScheduled(fbCase, p);
             }
         }
+        return OK_RESPONSE;
     }
 }

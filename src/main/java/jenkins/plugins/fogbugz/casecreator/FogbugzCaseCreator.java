@@ -10,6 +10,10 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.tasks.junit.CaseResult;
+import hudson.tasks.junit.TestResultAction;
+import hudson.tasks.test.AbstractTestResultAction;
+import hudson.tasks.test.AggregatedTestResultPublisher;
+import hudson.tasks.test.TestResult;
 import jenkins.plugins.fogbugz.notifications.FogbugzNotifier;
 import lombok.extern.java.Log;
 import org.apache.commons.lang.StringUtils;
@@ -44,7 +48,11 @@ public class FogbugzCaseCreator extends Notifier {
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
 
         try {
-            int currentFailingTests = build.getTestResultAction().getFailCount();
+            AbstractTestResultAction resultAction = build.getTestResultAction();
+            if (resultAction == null) {
+                return true;
+            }
+            int currentFailingTests = resultAction.getFailCount();
             int previousFailingTests = build.getPreviousBuild().getTestResultAction().getFailCount();
 
             boolean newFailedTests = false;
@@ -69,7 +77,7 @@ public class FogbugzCaseCreator extends Notifier {
                         notifier.getDescriptor().getMergekeeperUserId(),  // AssignedTo
                         "autocreated", // tags
                         true, // isOpen
-                        "", "", "", "", // feature-, target- and originalbranch + approved revision
+                        "", "", "", "", "", // feature-, target- and originalbranch + approved revision + ci project
                         "" // milestone
                 );
 
