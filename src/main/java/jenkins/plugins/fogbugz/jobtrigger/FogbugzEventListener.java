@@ -86,9 +86,13 @@ public class FogbugzEventListener implements UnprotectedRootAction {
 
         String ciProject = fbCase.getCiProject();
 
+        log.log(Level.INFO, "Ci project field value: " + ciProject);
+
         if (ciProject != null && !ciProject.isEmpty()) {
             jobname =  ciProject + jobnamepostfix;
         }
+
+        log.log(Level.INFO, "Looking for job with name: " + jobname);
 
         // Search for Job that'll be triggered.
         for (Project<?, ?> p: Jenkins.getInstance().getItems(Project.class)) {

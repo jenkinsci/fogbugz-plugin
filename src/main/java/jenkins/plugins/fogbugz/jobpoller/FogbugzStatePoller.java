@@ -59,7 +59,7 @@ public class FogbugzStatePoller extends TimerTrigger {
         for (FogbugzCase c : cases) {
             Job job = (Job)this.job;
             if (!job.isBuilding() && !job.isInQueue()) {
-                fbListener.scheduleJob(fb, c.getId(), this.job.getName(), null, this.ciProjectField);
+                fbListener.scheduleJob(fb, c.getId(), this.job.getName(), null, null);
             }
         }
 
