@@ -40,6 +40,9 @@ public class FogbugzEnvironmentWrapperTest {
         assertEquals(
                 "https://code.example.com/var/something/test",
                 wrapper.parseRepoUrl("git+https://code.example.com/var/something/test#pta1404"));
+        assertEquals(
+                "user@git.example.com:/some/path",
+                wrapper.parseRepoUrl("git+user@git.example.com:/some/path#some-branch"));
 
     }
 

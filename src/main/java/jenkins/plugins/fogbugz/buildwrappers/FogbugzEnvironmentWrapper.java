@@ -14,6 +14,7 @@ import org.paylogic.fogbugz.FogbugzCase;
 import org.paylogic.fogbugz.FogbugzManager;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
@@ -69,13 +70,17 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
         matcher.group();
         boolean fullURL = false;
         featureBranchField = matcher.group("url");
-        URI featureRepoUrl = new URI(featureBranchField);
-        URI res = baseRepoUrl.resolve(featureRepoUrl);
-        // TODO: ugly workaround for mercurial
-        if (!fullURL && (repoBase.contains(baseRepoUrl.getHost() + "//")
-                || featureBranchField.toString().contains(featureRepoUrl.getHost() + "//")))
-            return res.toString().replace(res.getHost() + "/",  res.getHost() + "//").replace("///", "//");
-        return res.toString();
+        try {
+            URI featureRepoUrl = new URI(featureBranchField);
+            URI res = baseRepoUrl.resolve(featureRepoUrl);
+            // TODO: ugly workaround for mercurial
+            if (!fullURL && (repoBase.contains(baseRepoUrl.getHost() + "//")
+                    || featureBranchField.toString().contains(featureRepoUrl.getHost() + "//")))
+                return res.toString().replace(res.getHost() + "/",  res.getHost() + "//").replace("///", "//");
+            return res.toString();
+        } catch (URISyntaxException exception) {
+            return featureBranchField;
+        }
     }
 
     /**
