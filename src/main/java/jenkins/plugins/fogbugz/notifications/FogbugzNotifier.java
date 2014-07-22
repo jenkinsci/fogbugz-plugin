@@ -13,6 +13,7 @@ import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.*;
 import hudson.tasks.*;
+import hudson.tasks.test.AbstractTestResultAction;
 import lombok.Getter;
 import lombok.extern.java.Log;
 import net.sf.json.JSONObject;
@@ -133,9 +134,9 @@ public class FogbugzNotifier extends Notifier {
         templateContext.data(
                 "messages", StringEscapeUtils.unescapeXml(StringEscapeUtils.unescapeHtml(reportingExtraMessage)));
         try {
-            templateContext.data("tests_failed", build.getTestResultAction().getFailCount());
-            templateContext.data("tests_skipped", build.getTestResultAction().getSkipCount());
-            templateContext.data("tests_total", build.getTestResultAction().getTotalCount());
+            templateContext.data("tests_failed", build.getAction(AbstractTestResultAction.class).getFailCount());
+            templateContext.data("tests_skipped", build.getAction(AbstractTestResultAction.class).getSkipCount());
+            templateContext.data("tests_total", build.getAction(AbstractTestResultAction.class).getTotalCount());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Exception during fetching of test results:", e);
             templateContext.data("tests_failed", "");

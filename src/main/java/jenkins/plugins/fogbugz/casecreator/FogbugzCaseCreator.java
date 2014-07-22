@@ -48,16 +48,16 @@ public class FogbugzCaseCreator extends Notifier {
     public boolean perform(AbstractBuild build, Launcher launcher, BuildListener listener) {
 
         try {
-            AbstractTestResultAction resultAction = build.getTestResultAction();
+            AbstractTestResultAction resultAction = build.getAction(AbstractTestResultAction.class);
             if (resultAction == null) {
                 return true;
             }
             int currentFailingTests = resultAction.getFailCount();
-            int previousFailingTests = build.getPreviousBuild().getTestResultAction().getFailCount();
+            int previousFailingTests = build.getPreviousBuild().getAction(AbstractTestResultAction.class).getFailCount();
 
             boolean newFailedTests = false;
             List<String> newFailingTestsList = new ArrayList();
-            for (Object cr : build.getTestResultAction().getFailedTests()) {
+            for (Object cr : build.getAction(AbstractTestResultAction.class).getFailedTests()) {
                 CaseResult rr = (CaseResult) cr;
                 if (rr.isFailed() && !rr.getPreviousResult().isFailed()) {
                     // New failing test. Report new failing even if this is the only one.
