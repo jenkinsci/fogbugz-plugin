@@ -14,6 +14,7 @@ import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.*;
 import hudson.tasks.*;
+import hudson.tasks.test.AbstractTestResultAction;
 import lombok.Getter;
 import lombok.extern.java.Log;
 import net.sf.json.JSONObject;
