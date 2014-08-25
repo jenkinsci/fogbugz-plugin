@@ -5,6 +5,7 @@ import com.github.jknack.handlebars.Template;
 import com.github.jknack.handlebars.Context;
 
 import hudson.EnvVars;
+import hudson.tasks.test.AbstractTestResultAction;
 import jenkins.plugins.fogbugz.FogbugzProjectProperty;
 import lombok.Setter;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -133,9 +134,10 @@ public class FogbugzNotifier extends Notifier {
         templateContext.data(
                 "messages", StringEscapeUtils.unescapeXml(StringEscapeUtils.unescapeHtml(reportingExtraMessage)));
         try {
-            templateContext.data("tests_failed", build.getTestResultAction().getFailCount());
-            templateContext.data("tests_skipped", build.getTestResultAction().getSkipCount());
-            templateContext.data("tests_total", build.getTestResultAction().getTotalCount());
+            AbstractTestResultAction testResultAction = build.getTestResultAction();
+            templateContext.data("tests_failed", testResultAction.getFailCount());
+            templateContext.data("tests_skipped", testResultAction.getSkipCount());
+            templateContext.data("tests_total", testResultAction.getTotalCount());
         } catch (Exception e) {
             log.log(Level.SEVERE, "Exception during fetching of test results:", e);
             templateContext.data("tests_failed", "");
