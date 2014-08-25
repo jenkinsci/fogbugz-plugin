@@ -135,10 +135,12 @@ public class FogbugzNotifier extends Notifier {
         templateContext.data(
                 "messages", StringEscapeUtils.unescapeXml(StringEscapeUtils.unescapeHtml(reportingExtraMessage)));
         try {
-            AbstractTestResultAction testResultAction = build.getTestResultAction();
-            templateContext.data("tests_failed", testResultAction.getFailCount());
-            templateContext.data("tests_skipped", testResultAction.getSkipCount());
-            templateContext.data("tests_total", testResultAction.getTotalCount());
+            AbstractTestResultAction testResultAction = build.getAction(AbstractTestResultAction.class);
+            if (testResultAction != null) {
+                templateContext.data("tests_failed", testResultAction.getFailCount());
+                templateContext.data("tests_skipped", testResultAction.getSkipCount());
+                templateContext.data("tests_total", testResultAction.getTotalCount());
+            }
         } catch (Exception e) {
             log.log(Level.SEVERE, "Exception during fetching of test results:", e);
             templateContext.data("tests_failed", "");
