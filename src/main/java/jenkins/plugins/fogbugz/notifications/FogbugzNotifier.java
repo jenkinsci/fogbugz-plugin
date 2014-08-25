@@ -346,7 +346,7 @@ public class FogbugzNotifier extends Notifier {
             this.originalBranchFieldname = formData.getString("originalBranchFieldname");
             this.targetBranchFieldname = formData.getString("targetBranchFieldname");
             this.approvedRevisionFieldname = formData.getString("approvedRevisionFieldname");
-            this.ciProjectFieldName = formData.getString("ciProjectFieldName");
+            this.ciProjectFieldName = formData.getString("ciProjectFieldname");
 
             int mergekeeperid = formData.getInt("mergekeeperUserId");
             if (mergekeeperid == 0) {
