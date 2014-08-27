@@ -14,3 +14,6 @@ Operations marked with an asterisk (*) need the CASE_ID string parameter on a Bu
 case it belongs to.
 If you trigger a build using the URLTrigger from Fogbugz, this is done automatically, so long as you configure
 the trigger like mentioned in URLTRIGGER.rst.
+
+.. image::
+  https://jenkins.ci.cloudbees.com/buildStatus/icon?job=plugins/fogbugz-plugin
