@@ -17,3 +17,4 @@ the trigger like mentioned in URLTRIGGER.rst.
 
 .. image::
   https://jenkins.ci.cloudbees.com/buildStatus/icon?job=plugins/fogbugz-plugin
+  :target: https://jenkins.ci.cloudbees.com/job/plugins/job/gatekeeper-plugin/
