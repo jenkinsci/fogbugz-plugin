@@ -1,13 +1,20 @@
 package jenkins.plugins.fogbugz.jobpoller;
 
 import antlr.ANTLRException;
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.model.Item;
 import hudson.model.Job;
+import hudson.model.ParameterValue;
+import hudson.model.Queue;
 import hudson.triggers.TimerTrigger;
 import hudson.triggers.TriggerDescriptor;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
+
+import hudson.util.LogTaskListener;
 import jenkins.plugins.fogbugz.jobtrigger.FogbugzEventListener;
 import jenkins.plugins.fogbugz.notifications.FogbugzNotifier;
 import lombok.extern.java.Log;
@@ -41,6 +48,11 @@ public class FogbugzStatePoller extends TimerTrigger {
         FogbugzManager fbManager = fb.getFogbugzManager();
         FogbugzEventListener fbListener = new FogbugzEventListener();
 
+        doRun(fb, fbManager, fbListener);
+
+    }
+
+    public void doRun(FogbugzNotifier fb, FogbugzManager fbManager, FogbugzEventListener fbListener) {
         FogbugzUser user = fbManager.getFogbugzUser(fbManager.getMergekeeperUserId());
 
         List<FogbugzCase> cases;
@@ -56,13 +68,24 @@ public class FogbugzStatePoller extends TimerTrigger {
             log.info("FogbugzStatePoller found no cases, not running.");
             return;
         }
-        for (FogbugzCase c : cases) {
+        for (FogbugzCase cs : cases) {
             Job job = (Job)this.job;
-            if (!job.isBuilding() && !job.isInQueue()) {
-                fbListener.scheduleJob(fb, c.getId(), this.job.getName(), null, null);
+            int case_id = cs.getId();
+            String case_id_string = case_id + "";
+            if (job.isBuilding()) {
+                try {
+                    EnvVars vars = job.getLastBuild().getEnvironment(new LogTaskListener(log, Level.INFO));
+                    if (vars.get("CASE_ID", "").trim().equals(case_id_string)) {
+                        continue;
+                    }
+                }
+                catch (InterruptedException exc) {
+                }
+                catch (IOException exc) {
+                }
             }
+            fbListener.scheduleJob(fb, case_id, job.getName(), null, null);
         }
-
     }
 
     @Extension

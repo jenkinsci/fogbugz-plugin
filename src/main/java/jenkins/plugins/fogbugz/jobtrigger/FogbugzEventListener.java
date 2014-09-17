@@ -64,6 +64,12 @@ public class FogbugzEventListener implements UnprotectedRootAction {
             return NO_CASE_FOUND_RESPONSE;
         }
 
+        if (jobnamepostfix == null) {
+            jobnamepostfix = "";
+        }
+
+        assert jobnamepostfix != null;
+
         FogbugzManager caseManager = fbNotifier.getFogbugzManager();
         if (ciprojectfieldname != null && !ciprojectfieldname.isEmpty()) {
             caseManager.setCiProjectFieldName(ciprojectfieldname);
