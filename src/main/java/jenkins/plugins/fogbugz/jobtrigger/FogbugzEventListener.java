@@ -33,6 +33,8 @@ public class FogbugzEventListener implements UnprotectedRootAction {
 
     private static String CASE_IS_AUTOCREATED_RESPONSE = "<html><body>Case is autocreated, skipping</body></html>";
 
+    private static String CASE_IS_MERGED_RESPONSE = "<html><body>Case is already merged, skipping</body></html>";
+
     private static String OK_RESPONSE = "<html><body>Scheduled ok</body></html>";
 
     public String getIconFileName() {
@@ -54,12 +56,12 @@ public class FogbugzEventListener implements UnprotectedRootAction {
         rsp.setContentType("text/html");
         log.info("Fogbugz URLTrigger received, processing...");
         FogbugzNotifier fbNotifier = new FogbugzNotifier();
-        String response = scheduleJob(fbNotifier, caseid, jobname, jobnamepostfix, ciprojectfieldname);
+        String response = scheduleJob(fbNotifier, caseid, jobname, jobnamepostfix, ciprojectfieldname, false);
         rsp.getOutputStream().write(response.getBytes());
     }
 
     public String scheduleJob(FogbugzNotifier fbNotifier, int caseid, String jobname, String jobnamepostfix,
-                              String ciprojectfieldname) {
+                              String ciprojectfieldname, boolean sendNotification) {
         if (caseid < 1) {
             return NO_CASE_FOUND_RESPONSE;
         }
@@ -85,9 +87,15 @@ public class FogbugzEventListener implements UnprotectedRootAction {
             return FOGBUGZ_ERROR_RESPONSE;
         }
 
+        FogbugzNotifier.DescriptorImpl descriptor = fbNotifier.getDescriptor();
+        String successfulBuildTag = (descriptor != null) ? descriptor.getSuccessfulBuildTag() : "";
+
         if (fbCase.hasTag("autocreated")) {
             // Then do not process this case until the tag is removed.
             return CASE_IS_AUTOCREATED_RESPONSE;
+        }
+        else if (successfulBuildTag != null && !successfulBuildTag.isEmpty() && fbCase.getTags().contains(successfulBuildTag)) {
+            return CASE_IS_MERGED_RESPONSE;
         }
 
         String ciProject = fbCase.getCiProject();
@@ -120,7 +128,9 @@ public class FogbugzEventListener implements UnprotectedRootAction {
                 }
                 // Here, we actually schedule the build.
                 p.scheduleBuild2(0, new FogbugzBuildCause(), new ParametersAction(parameters));
-                fbNotifier.notifyScheduled(fbCase, p);
+                if (sendNotification) {
+                    fbNotifier.notifyScheduled(fbCase, p);
+                }
             }
         }
         return OK_RESPONSE;

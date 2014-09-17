@@ -36,13 +36,15 @@ public class FogbugzStatePollerTest {
     private FogbugzNotifier notifier;
     @Mock
     private FogbugzManager manager;
+    @Mock
+    private FogbugzNotifier.DescriptorImpl notifierDescriptor;
 
 
     @Test
     public void testRun() throws Exception {
         given(notifier.getFogbugzManager()).willReturn(manager);
         FogbugzUser fogbugzUser = new FogbugzUser(2, "test user");
-        FogbugzCase expected = new FogbugzCase(7, "HALLO!", fogbugzUser.ix, fogbugzUser.ix, "merged", true,
+        FogbugzCase expected = new FogbugzCase(7, "HALLO!", fogbugzUser.ix, fogbugzUser.ix, "tag", true,
                 "maikelwever/repo1#c7", "r1336", "r1336", "1336", "myproject_mergekeepers", "some revision");
         given(manager.getCaseById(7)).willReturn(expected);
         given(manager.getFogbugzUser(2)).willReturn(fogbugzUser);
@@ -50,28 +52,37 @@ public class FogbugzStatePollerTest {
         ArrayList<FogbugzCase> cases = new ArrayList<FogbugzCase>();
         cases.add(expected);
         given(manager.searchForCases(anyString())).willReturn(cases);
+        given(notifier.getDescriptor()).willReturn(notifierDescriptor);
+        given(notifierDescriptor.getSuccessfulBuildTag()).willReturn("merged");
 
         FreeStyleProject project = j.createFreeStyleProject("myproject_mergekeepers");
-        j.setQuietPeriod(100);
+        j.setQuietPeriod(200);
         JobProperty property = new ParametersDefinitionProperty(new StringParameterDefinition("CASE_ID", ""));
         project.addProperty(property);
         FogbugzStatePoller poller = new FogbugzStatePoller("1 1 1 1 1", "myproject_mergekeepers", "cixproject");
         project.getBuildersList().add(new TestBuilder() {
             @Override
             public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
-                sleep(4000);
+                sleep(1000);
                 return true;
             }
         });
         poller.start(project, false);
         poller.doRun(notifier, manager, new FogbugzEventListener());
-        sleep(10);
         Queue.Item[] items = Queue.getInstance().getItems();
         assertEquals(1, items.length);
         assertEquals("CASE_ID=7", items[0].getParams().trim());
         sleep(100);
         assert project.isBuilding();
         // should not schedule the build if it's building with same case id
+        poller.doRun(notifier, manager, new FogbugzEventListener());
+        assert !project.isInQueue();
+
+        sleep(2000);
+        assert !project.isBuilding();
+        assert !project.isInQueue();
+        //for marked as successful, nothing should be scheduled
+        expected.addTag("merged");
         poller.doRun(notifier, manager, new FogbugzEventListener());
         assert !project.isInQueue();
     }

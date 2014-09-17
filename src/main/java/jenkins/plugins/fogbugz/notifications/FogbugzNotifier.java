@@ -231,11 +231,6 @@ public class FogbugzNotifier extends Notifier {
         return (DescriptorImpl)super.getDescriptor();
     }
 
-    @Deprecated
-    public FogbugzManager getFogbugzCaseManager() {
-        return this.getDescriptor().getFogbugzCaseManager();
-    }
-
     public FogbugzManager getFogbugzManager() {
         return this.getDescriptor().getFogbugzManager();
     }
@@ -370,11 +365,6 @@ public class FogbugzNotifier extends Notifier {
 
             save();
             return super.configure(req, formData);
-        }
-
-        @Deprecated
-        public FogbugzManager getFogbugzCaseManager() {
-            return this.getFogbugzManager();
         }
 
         public FogbugzManager getFogbugzManager() {

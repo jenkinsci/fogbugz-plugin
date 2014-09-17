@@ -69,7 +69,7 @@ public class FogbugzStatePoller extends TimerTrigger {
             return;
         }
         for (FogbugzCase cs : cases) {
-            Job job = (Job)this.job;
+            Job job = (Job) this.job;
             int case_id = cs.getId();
             String case_id_string = case_id + "";
             if (job.isBuilding()) {
@@ -78,13 +78,11 @@ public class FogbugzStatePoller extends TimerTrigger {
                     if (vars.get("CASE_ID", "").trim().equals(case_id_string)) {
                         continue;
                     }
-                }
-                catch (InterruptedException exc) {
-                }
-                catch (IOException exc) {
+                } catch (InterruptedException exc) {
+                } catch (IOException exc) {
                 }
             }
-            fbListener.scheduleJob(fb, case_id, job.getName(), null, null);
+            fbListener.scheduleJob(fb, case_id, job.getName(), null, null, false);
         }
     }
 
