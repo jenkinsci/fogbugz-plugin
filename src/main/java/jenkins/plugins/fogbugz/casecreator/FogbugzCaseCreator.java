@@ -69,7 +69,7 @@ public class FogbugzCaseCreator extends Notifier {
             if (newFailedTests) {
                 // We have new failing tests it seems.
                 FogbugzNotifier notifier = new FogbugzNotifier();
-                FogbugzManager caseManager = notifier.getFogbugzCaseManager();
+                FogbugzManager caseManager = notifier.getFogbugzManager();
                 FogbugzCase fbCase = new FogbugzCase(
                         0, // ID of 0 should create new case.
                         String.format("New failing tests in Jenkins job '%s'", build.getProject().getName()), // Case title

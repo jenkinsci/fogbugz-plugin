@@ -42,16 +42,16 @@ public class FogbugzEventListenerTests {
                 "maikelwever/repo1#c7", "r1336", "r1336", "1336", "myproject", "some revision");
         given(manager.getCaseById(7)).willReturn(expected);
 
-        String response = new FogbugzEventListener().scheduleJob(notifier, 0, "some job", null, null);
+        String response = new FogbugzEventListener().scheduleJob(notifier, 0, "some job", null, null, false);
         assertEquals("<html><body>No case found</body></html>", response);
 
-        response = new FogbugzEventListener().scheduleJob(notifier, 1, "some job", null, null);
+        response = new FogbugzEventListener().scheduleJob(notifier, 1, "some job", null, null, false);
         assertEquals("<html><body>No case found</body></html>", response);
 
         FreeStyleProject project = j.createFreeStyleProject("myproject_mergekeepers");
         JobProperty property = new ParametersDefinitionProperty(new StringParameterDefinition("CASE_ID", ""));
         project.addProperty(property);
-        response = new FogbugzEventListener().scheduleJob(notifier, 7, null, "_mergekeepers", "cixproject");
+        response = new FogbugzEventListener().scheduleJob(notifier, 7, null, "_mergekeepers", "cixproject", false);
         assertEquals("<html><body>Scheduled ok</body></html>", response);
         assertEquals("CASE_ID=7", project.getQueueItem().getParams().trim());
     }
