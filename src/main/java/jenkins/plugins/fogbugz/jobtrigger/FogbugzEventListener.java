@@ -56,7 +56,7 @@ public class FogbugzEventListener implements UnprotectedRootAction {
         rsp.setContentType("text/html");
         log.info("Fogbugz URLTrigger received, processing...");
         FogbugzNotifier fbNotifier = new FogbugzNotifier();
-        String response = scheduleJob(fbNotifier, caseid, jobname, jobnamepostfix, ciprojectfieldname, false);
+        String response = scheduleJob(fbNotifier, caseid, jobname, jobnamepostfix, ciprojectfieldname, true);
         rsp.getOutputStream().write(response.getBytes());
     }
 
