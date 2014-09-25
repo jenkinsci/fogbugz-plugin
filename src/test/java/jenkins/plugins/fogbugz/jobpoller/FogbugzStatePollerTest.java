@@ -69,7 +69,7 @@ public class FogbugzStatePollerTest {
         });
         poller.start(project, false);
         poller.doRun(notifier, manager, new FogbugzEventListener());
-        sleep(10);
+        sleep(5);
         Queue.Item[] items = Queue.getInstance().getItems();
         assertEquals(1, items.length);
         assertEquals("CASE_ID=7", items[0].getParams().trim());
