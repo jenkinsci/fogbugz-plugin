@@ -37,6 +37,8 @@ public class FogbugzEventListener implements UnprotectedRootAction {
 
     private static String OK_RESPONSE = "<html><body>Scheduled ok</body></html>";
 
+    private static String NOTHING_RESPONSE = "<html><body>Nothing was sceduled. Note that anonymous has to have a job READ permission.</body></html>";
+
     public String getIconFileName() {
         return null;
     }
@@ -131,8 +133,9 @@ public class FogbugzEventListener implements UnprotectedRootAction {
                 if (sendNotification) {
                     fbNotifier.notifyScheduled(fbCase, p);
                 }
+                return OK_RESPONSE;
             }
         }
-        return OK_RESPONSE;
+        return NOTHING_RESPONSE;
     }
 }
