@@ -124,7 +124,12 @@ public class FogbugzNotifier extends Notifier {
             return false;
         }
 
-        FogbugzEvent lastAssignmentEvent = caseManager.getLastAssignedToGatekeepersEvent(fbCase.getId());
+        FogbugzEvent lastAssignmentEvent = caseManager.getLastAssignedTo(
+                fbCase.getId(), this.getDescriptor().getGatekeeperUserId());
+        if (lastAssignmentEvent == null) {
+            lastAssignmentEvent = caseManager.getLastAssignedTo(
+                    fbCase.getId(), this.getDescriptor().getMergekeeperUserId());
+        }
 
         /* Fill template context with useful variables. */
         Context templateContext = Context.newContext(null);
