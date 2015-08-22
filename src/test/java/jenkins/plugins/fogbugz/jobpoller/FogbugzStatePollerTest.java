@@ -73,15 +73,16 @@ public class FogbugzStatePollerTest {
         Queue.Item[] items = Queue.getInstance().getItems();
         assertEquals(1, items.length);
         assertEquals("CASE_ID=7", items[0].getParams().trim());
-        sleep(100);
-        assert project.isBuilding();
+        while (!project.isBuilding()) {
+            sleep(10);
+        }
         // should not schedule the build if it's building with same case id
         poller.doRun(notifier, manager, new FogbugzEventListener());
+        sleep(10);
         assert !project.isInQueue();
-
-        sleep(2000);
-        assert !project.isBuilding();
-        assert !project.isInQueue();
+        while (project.isInQueue() || project.isBuilding()) {
+            sleep(10);
+        }
         //for marked as successful, nothing should be scheduled
         expected.addTag("merged");
         poller.doRun(notifier, manager, new FogbugzEventListener());

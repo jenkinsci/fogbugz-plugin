@@ -129,7 +129,7 @@ public class FogbugzEventListener implements UnprotectedRootAction {
                     }
                 }
                 // Here, we actually schedule the build.
-                p.scheduleBuild2(0, new FogbugzBuildCause(), new ParametersAction(parameters));
+                p.scheduleBuild2(1, new FogbugzBuildCause(), new ParametersAction(parameters));
                 if (sendNotification) {
                     fbNotifier.notifyScheduled(fbCase, p);
                 }

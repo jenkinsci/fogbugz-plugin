@@ -136,6 +136,7 @@ public class FogbugzNotifier extends Notifier {
         templateContext.data("url", build.getAbsoluteUrl());
         templateContext.data("buildNumber", Integer.toString(build.getNumber()));
         templateContext.data("buildResult", build.getResult().toString());
+        templateContext.data("buildTime", build.getTime());
         log.log(Level.FINE, "ReportingExtraMessage: " + reportingExtraMessage);
         templateContext.data(
                 "messages", StringEscapeUtils.unescapeXml(StringEscapeUtils.unescapeHtml(reportingExtraMessage)));
@@ -297,6 +298,7 @@ public class FogbugzNotifier extends Notifier {
         public String getFailedBuildTemplate() {
             if (this.failedBuildTemplate == null || this.failedBuildTemplate.isEmpty()) {
                 return "Jenkins reports that the build has {{tests_failed}} failed tests :(" +
+                        "\nBuild took {{builTime}}" +
                         "\nCatched log messages:\n{{messages}}" +
                         "\nView extended result here: {{url}}";
             } else {
@@ -307,6 +309,7 @@ public class FogbugzNotifier extends Notifier {
         public String getSuccessfulBuildTemplate() {
             if (this.successfulBuildTemplate == null || this.successfulBuildTemplate.isEmpty()) {
                 return "Jenkins reports that the build was successful!" +
+                        "\nBuild took {{builTime}}" +
                         "\nCatched log messages:\n{{messages}}" +
                         "\nView extended result here: {{url}}";
             } else {
