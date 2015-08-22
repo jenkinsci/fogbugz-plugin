@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.577</version>
+        <version>1.548</version>
     </parent>
 
     <artifactId>fogbugz</artifactId>
@@ -49,11 +49,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jenkins-ci.main</groupId>
-            <artifactId>jenkins-core</artifactId>
-            <version>1.540</version>
-        </dependency>
-        <dependency>
             <groupId>org.paylogic</groupId>   <!-- This artifact contains API interface for FogBugz 7+           -->
             <artifactId>Fogbugz</artifactId>  <!-- The artifact is published on maven central repo               -->
             <version>[2.2.9,)</version>       <!-- You can find the source on github.com/paylogic/java-fogbugz   -->
@@ -89,6 +84,11 @@
             <groupId>findbugs</groupId>
             <artifactId>annotations</artifactId>
             <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.main</groupId>
+            <artifactId>jenkins-core</artifactId>
+            <version>1.548</version>
         </dependency>
     </dependencies>
 

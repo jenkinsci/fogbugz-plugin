@@ -1,34 +1,30 @@
 package jenkins.plugins.fogbugz.notifications;
 
+import com.github.jknack.handlebars.Context;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
-import com.github.jknack.handlebars.Context;
-
 import hudson.EnvVars;
-import hudson.tasks.test.AbstractTestResultAction;
-import jenkins.plugins.fogbugz.FogbugzProjectProperty;
-import lombok.Setter;
-import org.apache.commons.lang.StringEscapeUtils;
-
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.*;
-import hudson.tasks.*;
+import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
+import hudson.tasks.Notifier;
+import hudson.tasks.Publisher;
 import hudson.tasks.test.AbstractTestResultAction;
+import jenkins.plugins.fogbugz.FogbugzProjectProperty;
 import lombok.Getter;
 import lombok.extern.java.Log;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 import org.paylogic.fogbugz.FogbugzCase;
-import org.paylogic.fogbugz.FogbugzManager;
 import org.paylogic.fogbugz.FogbugzEvent;
-import org.paylogic.fogbugz.InvalidResponseException;
+import org.paylogic.fogbugz.FogbugzManager;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 
 /**
