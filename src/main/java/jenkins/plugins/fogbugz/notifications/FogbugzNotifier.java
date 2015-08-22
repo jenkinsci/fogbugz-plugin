@@ -298,7 +298,7 @@ public class FogbugzNotifier extends Notifier {
         public String getFailedBuildTemplate() {
             if (this.failedBuildTemplate == null || this.failedBuildTemplate.isEmpty()) {
                 return "Jenkins reports that the build has {{tests_failed}} failed tests :(" +
-                        "\nBuild took {{builTime}}" +
+                        "\nBuild took {{buildTime}}" +
                         "\nCatched log messages:\n{{messages}}" +
                         "\nView extended result here: {{url}}";
             } else {
@@ -309,7 +309,7 @@ public class FogbugzNotifier extends Notifier {
         public String getSuccessfulBuildTemplate() {
             if (this.successfulBuildTemplate == null || this.successfulBuildTemplate.isEmpty()) {
                 return "Jenkins reports that the build was successful!" +
-                        "\nBuild took {{builTime}}" +
+                        "\nBuild took {{buildTime}}" +
                         "\nCatched log messages:\n{{messages}}" +
                         "\nView extended result here: {{url}}";
             } else {
