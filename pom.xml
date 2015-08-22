@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.paylogic</groupId>   <!-- This artifact contains API interface for FogBugz 7+           -->
             <artifactId>Fogbugz</artifactId>  <!-- The artifact is published on maven central repo               -->
-            <version>[2.2.9,)</version>       <!-- You can find the source on github.com/paylogic/java-fogbugz   -->
+            <version>[2.2.10,)</version>       <!-- You can find the source on github.com/paylogic/java-fogbugz   -->
                                               <!-- Feel free to send us a pull-request if you want more features -->
         </dependency>
         <dependency>
@@ -106,6 +106,10 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
+                    <compilerArgs>
+                        <arg>-verbose</arg>
+                        <arg>-Xlint:all,-options,-path</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>

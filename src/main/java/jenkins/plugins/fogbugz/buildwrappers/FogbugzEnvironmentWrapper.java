@@ -98,7 +98,7 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
      * Retrieves data from Fogbugz, and puts it into environment variables.
      */
     public BuildWrapper.Environment setUp(AbstractBuild build, Launcher launcher, BuildListener listener) {
-        EnvVars envVars = new EnvVars();
+        final EnvVars envVars = new EnvVars();
 
         EnvVars currentEnv;
         try {
@@ -132,12 +132,10 @@ public class FogbugzEnvironmentWrapper extends BuildWrapper {
         envVars.put("ORIGINAL_BRANCH", this.parseBranchName(fbCase.getOriginalBranch()));
         envVars.put("FEATURE_BRANCH", this.parseBranchName(fbCase.getFeatureBranch()));
         envVars.put("APPROVED_REVISION", fbCase.getApprovedRevision());
-        final Map<String, String> finalEnvVars = (Map<String, String>) envVars.clone();
-
         return new Environment() {
             @Override
             public void buildEnvVars(Map<String, String> env) {
-                env.putAll(finalEnvVars);
+                env.putAll(envVars);
             }
         };
     }

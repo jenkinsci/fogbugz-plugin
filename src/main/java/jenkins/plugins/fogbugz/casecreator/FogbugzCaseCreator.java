@@ -10,10 +10,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.tasks.junit.CaseResult;
-import hudson.tasks.junit.TestResultAction;
 import hudson.tasks.test.AbstractTestResultAction;
-import hudson.tasks.test.AggregatedTestResultPublisher;
-import hudson.tasks.test.TestResult;
 import jenkins.plugins.fogbugz.notifications.FogbugzNotifier;
 import lombok.extern.java.Log;
 import org.apache.commons.lang.StringUtils;
@@ -22,7 +19,6 @@ import org.paylogic.fogbugz.FogbugzCase;
 import org.paylogic.fogbugz.FogbugzManager;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -56,7 +52,7 @@ public class FogbugzCaseCreator extends Notifier {
             int previousFailingTests = build.getPreviousBuild().getAction(AbstractTestResultAction.class).getFailCount();
 
             boolean newFailedTests = false;
-            List<String> newFailingTestsList = new ArrayList();
+            ArrayList<String> newFailingTestsList = new ArrayList<String>();
             for (Object cr : build.getAction(AbstractTestResultAction.class).getFailedTests()) {
                 CaseResult rr = (CaseResult) cr;
                 if (rr.isFailed() && !rr.getPreviousResult().isFailed()) {
