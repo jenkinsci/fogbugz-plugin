@@ -133,7 +133,7 @@ public class FogbugzNotifier extends Notifier {
         templateContext.data("buildNumber", Integer.toString(build.getNumber()));
         templateContext.data("buildResult", build.getResult().toString());
         templateContext.data("buildTime", build.getDurationString());
-        templateContext.data("bultOn", build.getBuiltOnStr());
+        templateContext.data("builtOn", build.getBuiltOnStr());
         log.log(Level.FINE, "ReportingExtraMessage: " + reportingExtraMessage);
         templateContext.data(
                 "messages", StringEscapeUtils.unescapeXml(StringEscapeUtils.unescapeHtml(reportingExtraMessage)));
