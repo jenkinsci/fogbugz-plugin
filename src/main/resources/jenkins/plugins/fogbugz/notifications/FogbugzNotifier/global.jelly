@@ -63,15 +63,15 @@
       <f:textarea />
     </f:entry>
 
-	<f:entry title="Assign back case to developer that assigned to 'gatekeeper' user on end of build." field="assignBackCase"
-	        description="Enabling this will assign back the case to the developer that assigned the case to the 'mergekeepers' user.">
-	        <f:checkbox />
-	</f:entry>
+  <f:entry field="assignBackCase">
+    <f:checkbox title="Assign back case to developer that assigned to 'gatekeeper' user on end of build."
+       description="Enabling this will assign back the case to the developer that assigned the case to the 'mergekeepers' user."/>
+  </f:entry>
 
-	<f:entry title="Set a milestone if the build succeeds." field="setMilestone"
-	        description="The milestone that will be set is the target branch minus the first character.">
-	        <f:checkbox />
-	</f:entry>
+  <f:entry field="setMilestone">
+    <f:checkbox title="Set a milestone if the build succeeds."
+	        description="The milestone that will be set is the target branch minus the first character."/>
+  </f:entry>
 
 	<f:entry title="Tag to add to Fogbugz case on successful build." field="successfulBuildTag"
 	        description="This tag will be added to the case if not already present on a successful build.">
